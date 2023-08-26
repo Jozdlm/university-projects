@@ -5,6 +5,22 @@ menor. */
 
 using namespace std;
 
+int max(int a, int b)
+{
+    if (a > b)
+        return a;
+    else
+        return b;
+}
+
+int min(int a, int b)
+{
+    if (a < b)
+        return a;
+    else
+        return b;
+}
+
 int main()
 {
     int num1, num2, num3;
@@ -15,51 +31,10 @@ int main()
 
     cout << "Orden de mayor a menor:" << endl;
 
-    if (num1 > num2 && num1 > num3)
-    {
-        max_num = num1;
+    max_num = max(num1, max(num2, num3));
+    min_num = min(num1, min(num2, num3));
 
-        if (num2 > num3)
-        {
-            mid_num = num2;
-            min_num = num3;
-        }
-        else
-        {
-            mid_num = num3;
-            min_num = num2;
-        }
-    }
-    else if (num2 > num1 && num2 > num3)
-    {
-        max_num = num2;
-
-        if (num1 > num3)
-        {
-            mid_num = num1;
-            min_num = num3;
-        }
-        else
-        {
-            mid_num = num3;
-            min_num = num1;
-        }
-    }
-    else
-    {
-        max_num = num3;
-
-        if (num1 > num2)
-        {
-            mid_num = num1;
-            min_num = num2;
-        }
-        else
-        {
-            mid_num = num2;
-            min_num = num1;
-        }
-    }
+    mid_num = num1 + num2 + num3 - max_num - min_num;
 
     cout << max_num << endl;
     cout << mid_num << endl;
