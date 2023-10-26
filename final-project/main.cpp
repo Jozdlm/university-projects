@@ -2,7 +2,7 @@
 #include <conio.h>
 #include <fstream>
 #include <locale.h>
-#include <Windows.h> 
+#include <Windows.h>
 
 using namespace std;
 void ingresar();
@@ -17,7 +17,6 @@ struct Employee
     string Phone;
     double Salary;
 };
-
 
 int main()
 {
@@ -60,7 +59,7 @@ void ingresar()
     ofstream ingreso("Empleados.txt", ios::app);
     char respuesta;
 
-    if (!ingresar)
+    if (!ingreso)
     {
         cerr << "Error, no se puede abrir el archivo";
         getch();
@@ -72,25 +71,35 @@ void ingresar()
         cin.ignore();
         system("cls");
         cout << "\nINGRESO DE DATOS: \n\n";
+
         cout << "Ingrese su primer nombre: ";
         getline(cin, employee.FirstName);
+
         cout << "Ingrese su primer apellido: ";
         getline(cin, employee.LastName);
+
         cout << "Ingrese su fecha de nacimiento: ";
         getline(cin, employee.DateBirth);
+
         cout << "Ingrese su DPI: ";
         getline(cin, employee.DPI);
+
         cout << "Ingrese su dirección: ";
         getline(cin, employee.Address);
+
         cout << "Ingrese su teléfono: ";
         getline(cin, employee.Phone);
+        
         cout << "Ingrese el sueldo: ";
         cin >> employee.Salary;
 
-        ingreso << employee.DPI << "*" << employee.FirstName << "*" << employee.LastName << "*" << employee.DateBirth << "*" << employee.Address << "*" << employee.Phone << "*" << employee.Salary << endl;
-        
+        ingreso << employee.DPI << "*" << employee.FirstName << "*" << employee.LastName << "*"
+                << employee.DateBirth << "*" << employee.Address << "*" << employee.Phone << "*"
+                << employee.Salary << endl;
+
         cout << "Desea realizar otro ingreso? s/n: ";
         cin >> respuesta;
     } while (toupper(respuesta) == 'S');
+
     ingreso.close();
 }
