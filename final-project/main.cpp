@@ -6,6 +6,18 @@
 using namespace std;
 void ingresar();
 
+struct Employee
+{
+    char DPI[13];
+    char FirstName[50];
+    char LastName[50];
+    char DateBirth[10];
+    char Address[50];
+    char Phone[9];
+    double Salary;
+};
+
+
 int main()
 {
     setlocale(LC_ALL, "");
@@ -42,10 +54,8 @@ int main()
 
 void ingresar()
 {
-    char nombre1[15];
-    char nombre2[15];
-    char apellido1[15];
-    char apellido2[15];
+    char nombre[15];
+    char apellido[15];
     char fechaNacimiento[15];
     char dpi[20];
     char direccion[50];
@@ -65,13 +75,9 @@ void ingresar()
         system("cls");
         cout << "\nINGRESO DE DATOS: \n\n";
         cout << "Ingrese su primer nombre: ";
-        cin.getline(nombre1, 15, '\n');
-        cout << "Ingrese su segundo nombre: ";
-        cin.getline(nombre2, 15, '\n');
+        cin.getline(nombre, 15, '\n');
         cout << "Ingrese su primer apellido: ";
-        cin.getline(apellido1, 15, '\n');
-        cout << "Ingrese su segundo apellido: ";
-        cin.getline(apellido2, 15, '\n');
+        cin.getline(apellido, 15, '\n');
         cout << "Ingrese su fecha de nacimiento: ";
         cin.getline(fechaNacimiento, 15, '\n');
         cout << "Ingrese su DPI: ";
@@ -82,7 +88,7 @@ void ingresar()
         cin.getline(telefono, 9, '\n');
         cout << "Ingrese el sueldo: ";
         cin >> sueldo;
-        ingreso << dpi << "*" << nombre1 << "*" << nombre2 << "*" << apellido1 << "*" << apellido2 << "*" << fechaNacimiento << "*" << dpi << "*" << direccion << "*" << telefono << "*" << sueldo << "\n";
+        ingreso << dpi << "*" << nombre << "*" << "*" << apellido << "*" << "*" << fechaNacimiento << "*" << dpi << "*" << direccion << "*" << telefono << "*" << sueldo << "\n";
         cout << "Desea realizar otro ingreso? s/n: \t";
         cin >> respuesta;
     } while (toupper(respuesta) == 'S');
