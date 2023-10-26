@@ -2,25 +2,26 @@
 #include <conio.h>
 #include <fstream>
 #include <locale.h>
+#include <Windows.h> 
 
 using namespace std;
 void ingresar();
 
 struct Employee
 {
-    char DPI[13];
-    char FirstName[50];
-    char LastName[50];
-    char DateBirth[10];
-    char Address[50];
-    char Phone[9];
+    string DPI;
+    string FirstName;
+    string LastName;
+    string DateBirth;
+    string Address;
+    string Phone;
     double Salary;
 };
 
 
 int main()
 {
-    setlocale(LC_ALL, "");
+    SetConsoleOutputCP(CP_UTF8);
 
     int opcion;
     do
@@ -54,42 +55,41 @@ int main()
 
 void ingresar()
 {
-    char nombre[15];
-    char apellido[15];
-    char fechaNacimiento[15];
-    char dpi[20];
-    char direccion[50];
-    char telefono[9];
-    double sueldo;
+    Employee employee;
+
     ofstream ingreso("Empleados.txt", ios::app);
     char respuesta;
+
     if (!ingresar)
     {
         cerr << "Error, no se puede abrir el archivo";
         getch();
         exit(0);
     }
+
     do
     {
         cin.ignore();
         system("cls");
         cout << "\nINGRESO DE DATOS: \n\n";
         cout << "Ingrese su primer nombre: ";
-        cin.getline(nombre, 15, '\n');
+        getline(cin, employee.FirstName);
         cout << "Ingrese su primer apellido: ";
-        cin.getline(apellido, 15, '\n');
+        getline(cin, employee.LastName);
         cout << "Ingrese su fecha de nacimiento: ";
-        cin.getline(fechaNacimiento, 15, '\n');
+        getline(cin, employee.DateBirth);
         cout << "Ingrese su DPI: ";
-        cin.getline(dpi, 20, '\n');
+        getline(cin, employee.DPI);
         cout << "Ingrese su dirección: ";
-        cin.getline(direccion, 50, '\n');
+        getline(cin, employee.Address);
         cout << "Ingrese su teléfono: ";
-        cin.getline(telefono, 9, '\n');
+        getline(cin, employee.Phone);
         cout << "Ingrese el sueldo: ";
-        cin >> sueldo;
-        ingreso << dpi << "*" << nombre << "*" << "*" << apellido << "*" << "*" << fechaNacimiento << "*" << dpi << "*" << direccion << "*" << telefono << "*" << sueldo << "\n";
-        cout << "Desea realizar otro ingreso? s/n: \t";
+        cin >> employee.Salary;
+
+        ingreso << employee.DPI << "*" << employee.FirstName << "*" << employee.LastName << "*" << employee.DateBirth << "*" << employee.Address << "*" << employee.Phone << "*" << employee.Salary << endl;
+        
+        cout << "Desea realizar otro ingreso? s/n: ";
         cin >> respuesta;
     } while (toupper(respuesta) == 'S');
     ingreso.close();
