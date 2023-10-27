@@ -6,6 +6,7 @@
 
 using namespace std;
 void ingresar();
+void displayEmployeeData();
 
 struct Employee
 {
@@ -41,6 +42,7 @@ int main()
             ingresar();
             break;
         case 2:
+            displayEmployeeData();
             break;
         case 3:
             break;
@@ -89,7 +91,7 @@ void ingresar()
 
         cout << "Ingrese su teléfono: ";
         getline(cin, employee.Phone);
-        
+
         cout << "Ingrese el sueldo: ";
         cin >> employee.Salary;
 
@@ -102,4 +104,38 @@ void ingresar()
     } while (toupper(respuesta) == 'S');
 
     ingreso.close();
+}
+
+// void loadEmployeeData() {
+//     // void employees;
+//     ifstream input("Empleados.txt");
+//     if (input) {
+//         // Employee employee;
+//         string line;
+//         while (getline(input, line)) {
+//             // Parse the line and populate the Employee struct
+//             // (you can use a suitable delimiter like '*' for parsing)
+//             // Example parsing code:
+//             // stringstream ss(line);
+//             // getline(ss, employee.DPI, '*');
+//             // getline(ss, employee.FirstName, '*');
+//             // ... (continue for other fields)
+//             // employees.push_back(employee);
+//             cout << getline(input, line);
+//         }
+//         input.close();
+//     }
+//     // return employees;
+// }
+
+void displayEmployeeData() {
+    ifstream input("Empleados.txt");
+    if (input) {
+        string line;
+        while (getline(input, line)) {
+            cout << line << endl; // Print each line to the console
+        }
+        input.close();
+    }
+    getch();
 }
