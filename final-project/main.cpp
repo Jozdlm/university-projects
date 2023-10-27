@@ -12,6 +12,7 @@ double sueldo;
 void ingresar();
 void mostrar();
 void buscarEmpleado();
+void eliminarEmpleado();
 
 int main()
 {
@@ -43,6 +44,7 @@ int main()
             break;
 
         case 4:
+            eliminarEmpleado();
             break;
         }
 
@@ -210,4 +212,60 @@ void buscarEmpleado()
         main();
     }
     buscar.close();
+}
+
+//-------------------- ELIMINAR EMPLEADO ----------------------------------
+
+void eliminarEmpleado()
+{
+    string targetDPI = "";
+
+    cout << "Ingrese el DPI del empleado que desea eliminar: ";
+    cin >> targetDPI;
+
+    ifstream inputFile("Empleados.txt");
+    if (!inputFile)
+    {
+        cerr << "Error, no se puede abrir el archivo";
+        getch();
+        return;
+    }
+
+    ofstream tempFile("temp.txt");
+    if (!tempFile)
+    {
+        cerr << "Error al crear el archivo temporal";
+        getch();
+        return;
+    }
+
+    string line;
+    bool deleted = false;
+
+    while (getline(inputFile, line))
+    {
+        // Verifica si la linea actual contiene el DPI que deseamos eliminar
+        if (line.find(targetDPI) != string::npos)
+        {
+            deleted = true;
+            continue;
+        }
+
+        tempFile << line << endl;
+    }
+
+    inputFile.close();
+    tempFile.close();
+
+    if (deleted)
+    {
+        remove("Empleados.txt");
+        rename("temp.txt", "Empleados.txt");
+        cout << "Registro eliminado exitosamente." << endl;
+    }
+    else
+    {
+        remove("temp.txt");
+        cout << "Registro no encontrado." << endl;
+    }
 }
