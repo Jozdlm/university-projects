@@ -3,10 +3,11 @@
 #include <fstream>
 #include <locale.h>
 #include <iomanip>
+#include <windows.h>
 
 using namespace std;
 
-char nombre1[15], nombre2[15], apellido1[15], apellido2[15], fechaNacimiento[15], dpi[20], direccion[50], telefono[9];
+std::string nombre1, nombre2, apellido1, apellido2, fechaNacimiento, dpi, direccion, telefono;
 double sueldo;
 
 void ingresar();
@@ -16,6 +17,8 @@ void eliminarEmpleado();
 
 int main()
 {
+    SetConsoleOutputCP(CP_UTF8);
+
     int opcion;
     do
     {
@@ -69,21 +72,21 @@ void ingresar()
         system("cls");
         cout << "\nINGRESO DE DATOS: \n\n";
         cout << "Ingrese su primer nombre: ";
-        cin.getline(nombre1, 15, '\n');
+        getline(cin, nombre1);
         cout << "Ingrese su segundo nombre: ";
-        cin.getline(nombre2, 15, '\n');
+        getline(cin, nombre2);
         cout << "Ingrese su primer apellido: ";
-        cin.getline(apellido1, 15, '\n');
+        getline(cin, apellido1);
         cout << "Ingrese su segundo apellido: ";
-        cin.getline(apellido2, 15, '\n');
+        getline(cin, apellido2);
         cout << "Ingrese su fecha de nacimiento: ";
-        cin.getline(fechaNacimiento, 15, '\n');
+        getline(cin, fechaNacimiento);
         cout << "Ingrese su DPI: ";
-        cin.getline(dpi, 20, '\n');
+        getline(cin, dpi);
         cout << "Ingrese su dirección: ";
-        cin.getline(direccion, 50, '\n');
+        getline(cin, direccion);
         cout << "Ingrese su teléfono: ";
-        cin.getline(telefono, 9, '\n');
+        getline(cin, telefono);
         cout << "Ingrese el sueldo: ";
         cin >> sueldo;
         ingreso << dpi << "*" << nombre1 << "*" << nombre2 << "*" << apellido1 << "*" << apellido2 << "*" << fechaNacimiento << "*" << dpi << "*" << direccion << "*" << telefono << "*" << sueldo << "\n";
@@ -117,21 +120,31 @@ void mostrar()
          << setw(10) << "Sueldo" << endl;
     cout << string(200, '-') << endl;
 
-    while (!proyecto.eof())
+    while (proyecto)
     {
-        proyecto.getline(dpi, 20, '*');
-        proyecto.getline(nombre1, 15, '*');
-        proyecto.getline(nombre2, 15, '*');
-        proyecto.getline(apellido1, 15, '*');
-        proyecto.getline(apellido2, 15, '*');
-        proyecto.getline(fechaNacimiento, 15, '*');
-        proyecto.getline(dpi, 20, '*');
-        proyecto.getline(direccion, 50, '*');
-        proyecto.getline(telefono, 9, '*');
-        proyecto >> sueldo;
-        proyecto.ignore();
+        string line;
+        getline(proyecto, line); // Lee toda la linea
 
-        if (!proyecto.fail())
+        if (line.empty())
+        {
+            continue;
+        }
+
+        // Uilizamos stringstream (ss) para obtener los datos separados por un '*'
+        stringstream ss(line);
+        getline(ss, dpi, '*');
+        getline(ss, nombre1, '*');
+        getline(ss, nombre2, '*');
+        getline(ss, apellido1, '*');
+        getline(ss, apellido2, '*');
+        getline(ss, fechaNacimiento, '*');
+        getline(ss, dpi, '*');
+        getline(ss, direccion, '*');
+        getline(ss, telefono, '*');
+        ss >> sueldo;
+
+        // Verifica que la lectura de los datos es exitosa
+        if (!ss.fail())
         {
             cout << left << setw(20) << dpi
                  << setw(15) << nombre1
