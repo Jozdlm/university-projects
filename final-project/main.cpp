@@ -102,7 +102,9 @@ void ingresar()
         cout << "Desea realizar otro ingreso? s/n: \t";
         cin >> respuesta;
     } while (toupper(respuesta) == 'S');
+
     ingreso.close();
+    main();
 }
 
 //_______________________________MOSTRAR_______________________________
