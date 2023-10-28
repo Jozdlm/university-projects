@@ -109,7 +109,10 @@ void ingresar()
 
 void mostrar()
 {
+    // Abre el archivo Empleados.txt
     ifstream proyecto("Empleados.txt", ios::in);
+
+    // Verfica si se abrió correctamente
     if (!proyecto)
     {
         cerr << "Error, no se puede abrir el archivo";
@@ -117,6 +120,7 @@ void mostrar()
         return;
     }
 
+    // Asigna las cabeceras de las tablas
     cout << left << setw(15) << "DPI"
          << setw(20) << "Nombres"
          << setw(20) << "Apellidos"
@@ -129,14 +133,14 @@ void mostrar()
     while (proyecto)
     {
         string line;
-        getline(proyecto, line); // Lee toda la linea
+        getline(proyecto, line); // Lee toda la linea del archvio
 
         if (line.empty())
         {
             continue;
         }
 
-        // Uilizamos stringstream (ss) para obtener los datos separados por un '*'
+        // Uilizamos stringstream (ss) para obtener los datos de la linea actual
         stringstream ss(line);
         getline(ss, dpi, '*');
         getline(ss, firstName, '*');
@@ -149,6 +153,7 @@ void mostrar()
         // Verifica que la lectura de los datos es exitosa
         if (!ss.fail())
         {
+            // Utiliza setw para estilizar el ancho de la tabla
             cout << left << setw(15) << dpi
                  << setw(20) << firstName
                  << setw(20) << lastName
@@ -169,7 +174,11 @@ void buscarEmpleado()
 {
     cin.ignore();
     system("cls");
+
+    // Abre el archivo Empleados
     ifstream buscar("Empleados.txt", ios::app);
+
+    // Verifica si se abrió correctamente
     if (!buscar)
     {
         cerr << "Error, no se puede abrir el archivo";
@@ -243,6 +252,7 @@ void eliminarEmpleado()
     cin >> targetDPI;
 
     ifstream inputFile("Empleados.txt");
+
     if (!inputFile)
     {
         cerr << "Error, no se puede abrir el archivo";
@@ -250,7 +260,9 @@ void eliminarEmpleado()
         return;
     }
 
+    // Crea un archivo temporal para almacenar la nueva base de datos
     ofstream tempFile("temp.txt");
+
     if (!tempFile)
     {
         cerr << "Error al crear el archivo temporal";
@@ -261,21 +273,25 @@ void eliminarEmpleado()
     string line;
     bool deleted = false;
 
+    // Verifica siempre y cuando la vacía no esté vacía
     while (getline(inputFile, line))
     {
         // Verifica si la linea actual contiene el DPI que deseamos eliminar
         if (line.find(targetDPI) != string::npos)
         {
             deleted = true;
+            // Omite la linea actual y no lo guarda en el archivo temporal
             continue;
         }
 
+        // Guarda la linea actual en el archivo temporal
         tempFile << line << endl;
     }
 
     inputFile.close();
     tempFile.close();
 
+    // Si eliminó una linea, sobreescribe la fuente de datos
     if (deleted)
     {
         remove("Empleados.txt");
