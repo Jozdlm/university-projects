@@ -7,7 +7,7 @@
 
 using namespace std;
 
-std::string nombre1, nombre2, apellido1, apellido2, fechaNacimiento, dpi, direccion, telefono;
+std::string firstName, lastName, fechaNacimiento, dpi, direccion, telefono;
 double sueldo;
 
 void ingresar();
@@ -49,6 +49,9 @@ int main()
         case 4:
             eliminarEmpleado();
             break;
+        case 5:
+            exit(0);
+            break;
         }
 
     } while (opcion != 5);
@@ -70,26 +73,32 @@ void ingresar()
     {
         cin.ignore();
         system("cls");
+
         cout << "\nINGRESO DE DATOS: \n\n";
-        cout << "Ingrese su primer nombre: ";
-        getline(cin, nombre1);
-        cout << "Ingrese su segundo nombre: ";
-        getline(cin, nombre2);
-        cout << "Ingrese su primer apellido: ";
-        getline(cin, apellido1);
-        cout << "Ingrese su segundo apellido: ";
-        getline(cin, apellido2);
+
+        cout << "Ingrese su nombre: ";
+        getline(cin, firstName);
+
+        cout << "Ingrese su apellido: ";
+        getline(cin, lastName);
+
         cout << "Ingrese su fecha de nacimiento: ";
         getline(cin, fechaNacimiento);
-        cout << "Ingrese su DPI: ";
+
+        cout << "Ingrese su DPI (13 dígitos): ";
         getline(cin, dpi);
+
         cout << "Ingrese su dirección: ";
         getline(cin, direccion);
+
         cout << "Ingrese su teléfono: ";
         getline(cin, telefono);
+
         cout << "Ingrese el sueldo: ";
         cin >> sueldo;
-        ingreso << dpi << "*" << nombre1 << "*" << nombre2 << "*" << apellido1 << "*" << apellido2 << "*" << fechaNacimiento << "*" << dpi << "*" << direccion << "*" << telefono << "*" << sueldo << "\n";
+
+        ingreso << dpi << "*" << firstName << "*" << lastName << "*" << fechaNacimiento << "*" << direccion << "*" << telefono << "*" << sueldo << "\n";
+
         cout << "Desea realizar otro ingreso? s/n: \t";
         cin >> respuesta;
     } while (toupper(respuesta) == 'S');
@@ -108,17 +117,14 @@ void mostrar()
         return;
     }
 
-    cout << left << setw(20) << "ID"
-         << setw(15) << "Nombre 1"
-         << setw(15) << "Nombre 2"
-         << setw(15) << "Apellido 1"
-         << setw(15) << "Apellido 2"
+    cout << left << setw(15) << "DPI"
+         << setw(20) << "Nombres"
+         << setw(20) << "Apellidos"
          << setw(15) << "Fecha Nac."
-         << setw(20) << "DPI"
-         << setw(50) << "Direccion"
+         << setw(30) << "Direccion"
          << setw(10) << "Telefono"
          << setw(10) << "Sueldo" << endl;
-    cout << string(200, '-') << endl;
+    cout << string(120, '-') << endl;
 
     while (proyecto)
     {
@@ -133,12 +139,9 @@ void mostrar()
         // Uilizamos stringstream (ss) para obtener los datos separados por un '*'
         stringstream ss(line);
         getline(ss, dpi, '*');
-        getline(ss, nombre1, '*');
-        getline(ss, nombre2, '*');
-        getline(ss, apellido1, '*');
-        getline(ss, apellido2, '*');
+        getline(ss, firstName, '*');
+        getline(ss, lastName, '*');
         getline(ss, fechaNacimiento, '*');
-        getline(ss, dpi, '*');
         getline(ss, direccion, '*');
         getline(ss, telefono, '*');
         ss >> sueldo;
@@ -146,14 +149,11 @@ void mostrar()
         // Verifica que la lectura de los datos es exitosa
         if (!ss.fail())
         {
-            cout << left << setw(20) << dpi
-                 << setw(15) << nombre1
-                 << setw(15) << nombre2
-                 << setw(15) << apellido1
-                 << setw(15) << apellido2
+            cout << left << setw(15) << dpi
+                 << setw(20) << firstName
+                 << setw(20) << lastName
                  << setw(15) << fechaNacimiento
-                 << setw(20) << dpi
-                 << setw(50) << direccion
+                 << setw(30) << direccion
                  << setw(10) << telefono
                  << setw(10) << sueldo << endl;
         }
@@ -199,10 +199,11 @@ void buscarEmpleado()
         string resultado = linea.substr(0, 13);
 
         if (resultado == dpiExt)
-        { 
+        {
             // comparamos el valor ingresado con lo que el fichero contiene y al encontrar una coincidencia lo imprimimos
             cout << "\n";
-            cout << linea << endl << endl;
+            cout << linea << endl
+                 << endl;
 
             // una vez hallado cambiamos el valor a true para detener nuestro ciclo repetitivo
             encontrado = true;
@@ -236,6 +237,7 @@ void buscarEmpleado()
 void eliminarEmpleado()
 {
     string targetDPI = "";
+    char respuesta;
 
     cout << "Ingrese el DPI del empleado que desea eliminar: ";
     cin >> targetDPI;
@@ -284,5 +286,18 @@ void eliminarEmpleado()
     {
         remove("temp.txt");
         cout << "Registro no encontrado." << endl;
+    }
+
+    cout << "Desea eliminar otro registro? S/N: ";
+    cin >> respuesta;
+
+    if (toupper(respuesta) == 'S')
+    {
+        system("cls");
+        eliminarEmpleado();
+    }
+    else
+    {
+        main();
     }
 }
