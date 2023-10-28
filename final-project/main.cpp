@@ -183,23 +183,26 @@ void buscarEmpleado()
     // Variable dpiExt para buscar por el DPI ya que es la unica pieza de informacion unica en el sistema
     // Respuesta es para preguntarle al usuario si desea volver a buscar
     char dpiExt[20], respuesta;
-    double sueldo;
     bool encontrado = false;
-    cout << "Ingrese DPI a buscar: (ej. 1234567890101) \n";
+
+    cout << "Ingrese DPI a buscar: (ej. 1234567890101)" << endl;
+    cout << "Nota: Por favor ingresar los 13 dígitos de lo contrario no realizará la busqueda correctamente" << endl;
     cin.getline(dpiExt, 20, '\n');
+
     while (!buscar.eof() && !encontrado)
     {
 
         // empezamos a recorrer la primera linea
         getline(buscar, linea);
 
-        // asignamos los primeros 13 digitos que corresponden al dpi resultado=linea.substr(0,13);
+        // asignamos los primeros 13 digitos que corresponden al dpi
+        string resultado = linea.substr(0, 13);
 
         if (resultado == dpiExt)
-        { // comparamos el valor ingresado con lo que el fichero contiene y al encontrar una coincidencia lo imprimimos
+        { 
+            // comparamos el valor ingresado con lo que el fichero contiene y al encontrar una coincidencia lo imprimimos
             cout << "\n";
-            cout << linea << endl
-                 << endl;
+            cout << linea << endl << endl;
 
             // una vez hallado cambiamos el valor a true para detener nuestro ciclo repetitivo
             encontrado = true;
@@ -215,6 +218,7 @@ void buscarEmpleado()
     // y al final del ciclo independientemente de su resultado preguntamos al usuario si desea volver a buscar
     cout << "Desea Realizar otra busqueda? S/N: \n";
     cin >> respuesta;
+
     if (toupper(respuesta) == 'S')
     {
         system("cls");
