@@ -3,42 +3,66 @@ internal class Program
 {
     private static void Main(string[] args)
     {
-        List<int> evenNums = new List<int> { };
-        List<int> oddNums = new List<int> { };
-        List<int> numbers = new List<int> { };
+        int[] numeros = { 5, 3, 8, 1, 4, 2, 9, 1 };
 
+        Console.WriteLine("Array original:");
 
-        for (int i = 1; i <= 100; i++)
+        string numerosStr = "";
+        foreach (int numero in numeros)
         {
-            numbers.Add(i);
+            numerosStr += $"{numero}, ";
         }
 
-        foreach (int number in numbers)
+        Console.WriteLine(numerosStr);
+
+        // Ordenar el array usando Bubble Sort
+        for (int i = 0; i < numeros.Length - 1; i++)
         {
-            if (number % 2 == 0)
+            for (int j = 0; j < numeros.Length - 1 - i; j++)
             {
-                evenNums.Add(number);
+                if (numeros[j] > numeros[j + 1])
+                {
+                    // Intercambiar elementos
+                    int temp = numeros[j];
+                    numeros[j] = numeros[j + 1];
+                    numeros[j + 1] = temp;
+                }
             }
-            else
+        }
+
+        Console.WriteLine("\nArray Ordenado: ");
+
+        string menorMayorStr = "";
+        foreach (int numero in numeros)
+        {
+            menorMayorStr += $"{numero}, ";
+        }
+
+        Console.WriteLine(menorMayorStr);
+
+        // Ordenar el array usando Bubble Sort
+        for (int i = 0; i < numeros.Length - 1; i++)
+        {
+            for (int j = 0; j < numeros.Length - 1 - i; j++)
             {
-                oddNums.Add(number);
+                if (numeros[j] < numeros[j + 1])
+                {
+                    // Intercambiar elementos
+                    int temp = numeros[j];
+                    numeros[j] = numeros[j + 1];
+                    numeros[j + 1] = temp;
+                }
             }
         }
 
-        string evenMessage = "Los números pares son: ";
-        string oddMessage = "Los números impares son: ";
+        Console.WriteLine("\nArray Ordenado: ");
 
-        foreach (int evenNum in evenNums)
+        string mayorMenorStr = "";
+        foreach (int numero in numeros)
         {
-            evenMessage += $"{evenNum}, ";
+            mayorMenorStr += $"{numero}, ";
         }
 
-        foreach (int oddNum in oddNums)
-        {
-            oddMessage += $"{oddNum}, ";
-        }
-
-        Console.WriteLine(evenMessage);
-        Console.WriteLine(oddMessage);
+        Console.WriteLine(mayorMenorStr);
     }
 }
