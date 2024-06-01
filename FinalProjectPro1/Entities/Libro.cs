@@ -9,11 +9,12 @@ public class Libro
     public int NumeroEdicion { get; set; }
     public required string Genero { get; set; }
     public int CantidadInventario { get; set; }
+    public required string Reseña { get; set; }
     public bool DisponibleParaPrestamo { get { return CantidadInventario > 0; } }
 
     public string ToCsv()
     {
-        return $"{Nombre},{Autor},{AñoPublicacion},{AñoEdicion},{NumeroEdicion},{Genero},{CantidadInventario}";
+        return $"{Nombre},{Autor},{AñoPublicacion},{AñoEdicion},{NumeroEdicion},{Genero},{CantidadInventario},{Reseña}";
     }
 
     public static Libro FromCsv(string csvLine)
@@ -27,7 +28,8 @@ public class Libro
             AñoEdicion = int.Parse(values[3]),
             NumeroEdicion = int.Parse(values[4]),
             Genero = values[5],
-            CantidadInventario = int.Parse(values[6])
+            CantidadInventario = int.Parse(values[6]),
+            Reseña = values[7]
         };
     }
 }
