@@ -11,9 +11,10 @@ Feel free to explore the repository, each folder correspond to a project.
 
 ## Projects
 
-| Project Name                             | Description                                | Language | Type    |
-| ---------------------------------------- | ------------------------------------------ | -------- | ------- |
-| [Employee Manager](/employee-managment/) | An application for managing employee data. | C++      | Console |
+| Project Name                             | Description                                    | Language | Type    |
+| ---------------------------------------- | ---------------------------------------------- | -------- | ------- |
+| [Employee Manager](/employee-managment/) | An application for managing employee data.     | C++      | Console |
+| [Age Calculator](/age-calculator/)       | An application that calculates a person’s age. | C#       | Console |
 
 ## License
 
