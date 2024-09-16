@@ -11,11 +11,12 @@ Feel free to explore the repository, each folder correspond to a project.
 
 ## Projects
 
-| Project Name                             | Description                                     | Language | Type    |
-| ---------------------------------------- | ----------------------------------------------- | -------- | ------- |
-| [Employee Manager](/employee-managment/) | An application for managing employee data.      | C++      | Console |
-| [Age Calculator](/age-calculator/)       | An application that calculates a person’s age.  | C#       | Console |
-| [Library System](/library-managment/)    | An application for managing books in a library. | C#       | Console |
+| Project Name                                     | Description                                           | Language | Type    |
+| ------------------------------------------------ | ----------------------------------------------------- | -------- | ------- |
+| [Employee Manager](/employee-managment/)         | Application for managing employee data.               | C++      | Console |
+| [Age Calculator](/age-calculator/)               | Application that calculates a person’s age.           | C#       | Console |
+| [Library Manager](/library-managment/)           | Application for managing books in a library.          | C#       | Console |
+| [Arithmetic Calculator](/arithmetic-calculator/) | Application that performs basic arithmetic operations | C#       | Console |
 
 ## License
 
