@@ -20,11 +20,6 @@ Feel free to explore the repository, each folder correspond to a project.
 | [BMI Calculator](/bmi-calculator/)                      | Application that calculates the Body Mass Index (BMI). | C#         | Console |
 | [Medical Prescription System](/medical-prescription/)   | Application that manages medical prescriptions.        | C#         | Console |
 | [Bank Account Manager](/bank-account-manager/)          | Application that manages a bank account transactions.  | C#         | Console |
-| [Challenge Problems #1](/challenge-problems-1/)         | Collection of various programming problems.            | C++        | Console |
-| [Challenge Problems #2](/challenge-problems-2/)         | Collection of various programming problems.            | C++        | Console |
-| [Challenge Problems #3](/challenge-problems-3/)         | Collection of various programming problems.            | C++        | Console |
-| [Challenge Problems #4](/challenge-problems-4/)         | Collection of various programming problems.            | C#         | Console |
-| [Challenge Problems #5](/challenge-problems-5/)         | Collection of various programming problems.            | C#         | Console |
 | [Veterinary clinic System](/veterinary-clinic-system/)  | Application that performs basic clinic operations.     | Java       | Console |
 | [Library Shop System](/library-shop-system/)            | Application for renting books and managing users.      | C#         | Console |
 | [Medical Appointments Rest API](/medical-appointments/) | Rest API for managing medical appointments.            | TypeScript | Web     |
