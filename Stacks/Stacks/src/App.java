@@ -1,6 +1,6 @@
 public class App {
     public static void main(String[] args) throws Exception {
-        testingQueue();
+        testingSortedList();
     }
 
     public static void testingStack() {
@@ -29,5 +29,16 @@ public class App {
 
         queue.dequeue();
         queue.display();
+    }
+
+    public static void testingSortedList() {
+        SortedList list = new SortedList();
+
+        list.insert(30);
+        list.insert(10);
+        list.insert(20);
+        list.insert(5);
+
+        list.display();
     }
 }
