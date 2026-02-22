@@ -12,8 +12,8 @@ public class App {
 
         stack.display();
 
-        System.out.println("Top element: " + stack.peek());
-        System.out.println("Popped element: " + stack.pop());
+        System.out.println("Valor de cabeza: " + stack.peek());
+        System.out.println("Elemento removido: " + stack.pop());
 
         stack.display();
     }

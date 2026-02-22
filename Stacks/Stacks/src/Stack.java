@@ -13,12 +13,12 @@ public class Stack {
         Node newNode = new Node(value);
         newNode.next = top;
         top = newNode;
-        System.out.println(value + " pushed to stack");
+        System.out.println(value + " Agregado a la lista");
     }
 
     public int pop() {
         if (isEmpty()) {
-            System.out.println("Stack Underflow");
+            System.out.println("Lista sin elementos");
             return -1;
         }
 
@@ -29,7 +29,7 @@ public class Stack {
 
     public int peek() {
         if (isEmpty()) {
-            System.out.println("Stack is empty!");
+            System.out.println("La lista esta vacia!");
             return -1;
         }
 
@@ -38,11 +38,11 @@ public class Stack {
 
     public void display() {
         if (isEmpty()) {
-            System.out.println("Stack is empty!");
+            System.out.println("La lista esta vacia!");
             return;
         }
 
-        System.out.println("Stack elements:");
+        System.out.println("Elementos de la lista:");
         Node temp = top;
         while (temp != null) {
             System.out.println(temp.value);
