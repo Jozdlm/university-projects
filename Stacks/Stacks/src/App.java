@@ -1,6 +1,6 @@
 public class App {
     public static void main(String[] args) throws Exception {
-        testingStack();
+        testingQueue();
     }
 
     public static void testingStack() {
@@ -16,5 +16,18 @@ public class App {
         System.out.println("Elemento removido: " + stack.pop());
 
         stack.display();
+    }
+
+    public static void testingQueue() {
+        Queue queue = new Queue();
+
+        queue.enqueue(10);
+        queue.enqueue(20);
+        queue.enqueue(30);
+
+        queue.display();
+
+        queue.dequeue();
+        queue.display();
     }
 }
