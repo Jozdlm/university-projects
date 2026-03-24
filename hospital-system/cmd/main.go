@@ -70,6 +70,7 @@ func main() {
 		protected.POST("/tickets/emit", queue.EmitTicket)
 		protected.GET("/queue/:clinicId", queue.GetQueue)
 		protected.PUT("/queue/:clinicId/call-next", queue.CallNext)
+		protected.PUT("/tickets/:ticketId/cancel", queue.CancelTicket)
 		protected.PUT("/tickets/:ticketId/attend", queue.MarkAttended)
 		protected.GET("/reports/by-clinic", reports.GetTicketsByClinic)
 		protected.GET("/reports/by-status", reports.GetTicketsByStatus)

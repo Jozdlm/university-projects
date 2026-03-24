@@ -122,3 +122,30 @@ func MarkAttended(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{"ticket": ticket})
 }
+
+func CancelTicket(c *gin.Context) {
+	ticketID := c.Param("ticketId")
+
+	var ticket db.Ticket
+	if err := db.DB.First(&ticket, ticketID).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Ticket not found"})
+		return
+	}
+
+	if ticket.Status != "WAITING" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "Only waiting tickets can be cancelled",
+		})
+		return
+	}
+
+	db.DB.Model(&ticket).Update("status", "CANCELLED")
+
+	// Remove from queue
+	db.DB.Where("ticket_id = ?", ticket.ID).Delete(&db.QueueEntry{})
+
+	c.JSON(http.StatusOK, gin.H{
+		"message": "Ticket cancelled successfully",
+		"ticket":  ticket,
+	})
+}
