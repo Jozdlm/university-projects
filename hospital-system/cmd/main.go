@@ -9,6 +9,7 @@ import (
 	"github.com/jozdlm/hospital-system/internal/auth"
 	"github.com/jozdlm/hospital-system/internal/db"
 	"github.com/jozdlm/hospital-system/internal/queue"
+	"github.com/jozdlm/hospital-system/internal/reports"
 )
 
 func main() {
@@ -58,6 +59,8 @@ func main() {
 		protected.GET("/queue/:clinicId", queue.GetQueue)
 		protected.PUT("/queue/:clinicId/call-next", queue.CallNext)
 		protected.PUT("/tickets/:ticketId/attend", queue.MarkAttended)
+		protected.GET("/reports/by-clinic", reports.GetTicketsByClinic)
+		protected.GET("/reports/by-status", reports.GetTicketsByStatus)
 	}
 
 	// Start server on port 8080
