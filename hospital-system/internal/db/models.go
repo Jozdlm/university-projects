@@ -12,11 +12,11 @@ type User struct {
 }
 
 type Clinic struct {
-	ID          uint   `gorm:"primaryKey;autoIncrement"`
-	Name        string `gorm:"not null"`
-	Description string
-	Tickets     []Ticket `gorm:"foreignKey:ClinicID"`
-	CreatedAt   time.Time
+	ID          uint      `gorm:"primaryKey;autoIncrement" json:"id"`
+	Name        string    `gorm:"not null" json:"name"`
+	Description string    `json:"description"`
+	Tickets     []Ticket  `gorm:"foreignKey:ClinicID" json:"-"`
+	CreatedAt   time.Time `json:"created_at"`
 }
 
 type Patient struct {

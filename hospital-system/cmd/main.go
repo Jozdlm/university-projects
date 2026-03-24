@@ -9,6 +9,7 @@ import (
 	"github.com/joho/godotenv"
 
 	"github.com/jozdlm/hospital-system/internal/auth"
+	"github.com/jozdlm/hospital-system/internal/clinic"
 	"github.com/jozdlm/hospital-system/internal/db"
 	"github.com/jozdlm/hospital-system/internal/queue"
 	"github.com/jozdlm/hospital-system/internal/reports"
@@ -72,6 +73,7 @@ func main() {
 		protected.PUT("/tickets/:ticketId/attend", queue.MarkAttended)
 		protected.GET("/reports/by-clinic", reports.GetTicketsByClinic)
 		protected.GET("/reports/by-status", reports.GetTicketsByStatus)
+		protected.GET("/clinics", clinic.GetClinics)
 	}
 
 	// Start server on port 8080
