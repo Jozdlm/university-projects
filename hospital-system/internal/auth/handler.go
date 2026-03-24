@@ -5,20 +5,19 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/jozdlm/hospital-system/internal/db"
+	"github.com/jozdlm/hospital-system/internal/utils"
 )
 
 type LoginInput struct {
-	Email    string `json:"email" binding:"required"`
-	Password string `json:"password" binding:"required"`
+	Email    string `json:"email" binding:"required,email"`
+	Password string `json:"password" binding:"required,min=6"`
 }
 
 func Login(c *gin.Context) {
 	var input LoginInput
 
 	if err := c.ShouldBindJSON(&input); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"error": "Email and password are required",
-		})
+		utils.HandleValidationError(c, err)
 		return
 	}
 

@@ -6,16 +6,17 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/jozdlm/hospital-system/internal/db"
+	"github.com/jozdlm/hospital-system/internal/utils"
 )
 
 func EmitTicket(c *gin.Context) {
 	var input struct {
-		ClinicID    uint   `json:"clinic_id" binding:"required"`
-		PatientName string `json:"patient_name" binding:"required"`
+		ClinicID    uint   `json:"clinic_id" binding:"required,min=1"`
+		PatientName string `json:"patient_name" binding:"required,min=2,max=100"`
 	}
 
 	if err := c.ShouldBindJSON(&input); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "clinic_id and patient_name are required"})
+		utils.HandleValidationError(c, err)
 		return
 	}
 
