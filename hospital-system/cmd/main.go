@@ -4,8 +4,10 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
+
 	"github.com/jozdlm/hospital-system/internal/auth"
 	"github.com/jozdlm/hospital-system/internal/db"
 	"github.com/jozdlm/hospital-system/internal/queue"
@@ -33,6 +35,15 @@ func main() {
 
 	// Set up Gin router
 	r := gin.Default()
+
+	// CORS
+	r.Use(cors.New(cors.Config{
+		AllowOrigins:     []string{"http://localhost:4200"},
+		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"},
+		ExposeHeaders:    []string{"Content-Length"},
+		AllowCredentials: true,
+	}))
 
 	// Health check route
 	r.GET("/health", func(c *gin.Context) {
