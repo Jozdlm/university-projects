@@ -8,6 +8,7 @@ import (
 	"github.com/joho/godotenv"
 	"github.com/jozdlm/hospital-system/internal/auth"
 	"github.com/jozdlm/hospital-system/internal/db"
+	"github.com/jozdlm/hospital-system/internal/queue"
 )
 
 func main() {
@@ -53,6 +54,10 @@ func main() {
 				"role":    c.MustGet("role"),
 			})
 		})
+		protected.POST("/tickets/emit", queue.EmitTicket)
+		protected.GET("/queue/:clinicId", queue.GetQueue)
+		protected.PUT("/queue/:clinicId/call-next", queue.CallNext)
+		protected.PUT("/tickets/:ticketId/attend", queue.MarkAttended)
 	}
 
 	// Start server on port 8080
