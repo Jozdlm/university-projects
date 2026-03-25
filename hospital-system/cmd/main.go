@@ -13,6 +13,7 @@ import (
 	"github.com/jozdlm/hospital-system/internal/db"
 	"github.com/jozdlm/hospital-system/internal/queue"
 	"github.com/jozdlm/hospital-system/internal/reports"
+	"github.com/jozdlm/hospital-system/internal/ticket"
 )
 
 func main() {
@@ -75,6 +76,7 @@ func main() {
 		protected.GET("/reports/by-clinic", reports.GetTicketsByClinic)
 		protected.GET("/reports/by-status", reports.GetTicketsByStatus)
 		protected.GET("/clinics", clinic.GetClinics)
+		protected.GET("/tickets", ticket.GetTickets)
 	}
 
 	// Start server on port 8080
