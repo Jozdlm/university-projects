@@ -106,6 +106,12 @@ func CallNext(c *gin.Context) {
 	// Update ticket status
 	db.DB.Model(&entry.Ticket).Update("status", "IN_ATTENTION")
 
+	// Remove from queue
+	db.DB.Where("ticket_id = ?", entry.TicketID).Delete(&db.QueueEntry{})
+
+	// Recalculate positions for remaining WAITING tickets
+	recalculateTicketPosition(clinicID)
+
 	c.JSON(http.StatusOK, gin.H{"ticket": entry.Ticket})
 }
 
@@ -143,6 +149,9 @@ func CancelTicket(c *gin.Context) {
 
 	// Remove from queue
 	db.DB.Where("ticket_id = ?", ticket.ID).Delete(&db.QueueEntry{})
+
+	// Recalculate positions for remaining WAITING tickets
+	recalculateTicketPosition(fmt.Sprint(ticket.ClinicID))
 
 	c.JSON(http.StatusOK, gin.H{
 		"message": "Ticket cancelled successfully",
