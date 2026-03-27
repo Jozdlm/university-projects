@@ -73,10 +73,15 @@ func main() {
 		protected.PUT("/queue/:clinicId/call-next", queue.CallNext)
 		protected.PUT("/tickets/:ticketId/cancel", queue.CancelTicket)
 		protected.PUT("/tickets/:ticketId/attend", queue.MarkAttended)
-		protected.GET("/reports/by-clinic", reports.GetTicketsByClinic)
-		protected.GET("/reports/by-status", reports.GetTicketsByStatus)
 		protected.GET("/clinics", clinic.GetClinics)
 		protected.GET("/tickets", ticket.GetTickets)
+		// Admin routes
+		adminRoutes := protected.Group("/reports")
+		adminRoutes.Use(auth.RoleMiddleware("admin"))
+		{
+			adminRoutes.GET("/by-clinic", reports.GetTicketsByClinic)
+			adminRoutes.GET("/by-status", reports.GetTicketsByStatus)
+		}
 	}
 
 	// Start server on port 8080

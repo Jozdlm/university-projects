@@ -43,3 +43,37 @@ func JWTMiddleware() gin.HandlerFunc {
 		c.Next()
 	}
 }
+
+func RoleMiddleware(requiredRole string) gin.HandlerFunc {
+	return func(ctx *gin.Context) {
+		k, ok := ctx.Get("role")
+
+		if !ok {
+			ctx.JSON(http.StatusUnauthorized, gin.H{
+				"error": "No session found, access denied",
+			})
+			ctx.Abort()
+			return
+		}
+
+		role, ok := k.(string)
+
+		if !ok {
+			ctx.JSON(http.StatusUnauthorized, gin.H{
+				"error": "No session found, access denied",
+			})
+			ctx.Abort()
+			return
+		}
+
+		if requiredRole != role {
+			ctx.JSON(http.StatusForbidden, gin.H{
+				"error": "Forbidden, access denied",
+			})
+			ctx.Abort()
+			return
+		}
+
+		ctx.Next()
+	}
+}
