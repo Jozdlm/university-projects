@@ -2,11 +2,10 @@ package network
 
 import "github.com/gin-gonic/gin"
 
-func Success(ctx *gin.Context, code int, message string, data any) {
+func Success(ctx *gin.Context, code int, data any) {
 	res := Response{
 		Success: true,
 		Code:    code,
-		Message: message,
 		Data:    data,
 	}
 

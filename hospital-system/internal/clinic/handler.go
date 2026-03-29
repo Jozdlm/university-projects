@@ -5,12 +5,11 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/jozdlm/hospital-system/internal/db"
+	"github.com/jozdlm/hospital-system/internal/network"
 )
 
-func GetClinics(c *gin.Context) {
+func GetClinics(ctx *gin.Context) {
 	var clinics []db.Clinic
-
 	db.DB.Find(&clinics)
-
-	c.JSON(http.StatusOK, gin.H{"clinics": clinics})
+	network.Success(ctx, http.StatusOK, gin.H{"clinics": clinics})
 }

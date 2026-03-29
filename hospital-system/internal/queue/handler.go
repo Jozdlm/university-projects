@@ -6,24 +6,27 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/jozdlm/hospital-system/internal/db"
+	"github.com/jozdlm/hospital-system/internal/network"
 	"github.com/jozdlm/hospital-system/internal/utils"
 )
 
-func EmitTicket(c *gin.Context) {
-	var input struct {
-		ClinicID    uint   `json:"clinic_id" binding:"required,min=1"`
-		PatientName string `json:"patient_name" binding:"required,min=2,max=100"`
-	}
+type NewTicket struct {
+	ClinicID    uint   `json:"clinic_id" binding:"required,min=1"`
+	PatientName string `json:"patient_name" binding:"required,min=2,max=100"`
+}
 
-	if err := c.ShouldBindJSON(&input); err != nil {
-		utils.HandleValidationError(c, err)
+func EmitTicket(ctx *gin.Context) {
+	var input NewTicket
+
+	if err := ctx.ShouldBindJSON(&input); err != nil {
+		utils.HandleValidationError(ctx, err)
 		return
 	}
 
 	// Verify clinic exists
 	var clinic db.Clinic
 	if err := db.DB.First(&clinic, input.ClinicID).Error; err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "Clinic not found"})
+		network.Error(ctx, http.StatusNotFound, "Clinic not found")
 		return
 	}
 
@@ -57,14 +60,14 @@ func EmitTicket(c *gin.Context) {
 	}
 	db.DB.Create(&entry)
 
-	c.JSON(http.StatusCreated, gin.H{
+	network.Success(ctx, http.StatusCreated, gin.H{
 		"ticket":   ticket,
 		"position": entry.Position,
 	})
 }
 
-func GetQueue(c *gin.Context) {
-	clinicID := c.Param("clinicId")
+func GetQueue(ctx *gin.Context) {
+	clinicID := ctx.Param("clinicId")
 
 	var entries []db.QueueEntry
 	db.DB.Where("clinic_id = ?", clinicID).
@@ -73,11 +76,11 @@ func GetQueue(c *gin.Context) {
 		Order("position asc").
 		Find(&entries)
 
-	c.JSON(http.StatusOK, gin.H{"queue": entries})
+	network.Success(ctx, http.StatusOK, gin.H{"queue": entries})
 }
 
-func CallNext(c *gin.Context) {
-	clinicID := c.Param("clinicId")
+func CallNext(ctx *gin.Context) {
+	clinicID := ctx.Param("clinicId")
 
 	// Get all waiting entries for this clinic ordered by position
 	var entries []db.QueueEntry
@@ -99,7 +102,7 @@ func CallNext(c *gin.Context) {
 	}
 
 	if !found {
-		c.JSON(http.StatusNotFound, gin.H{"error": "No waiting tickets in this queue"})
+		network.Error(ctx, http.StatusNotFound, "No waiting tickets in this queue")
 		return
 	}
 
@@ -112,36 +115,34 @@ func CallNext(c *gin.Context) {
 	// Recalculate positions for remaining WAITING tickets
 	recalculateTicketPosition(clinicID)
 
-	c.JSON(http.StatusOK, gin.H{"ticket": entry.Ticket})
+	network.Success(ctx, http.StatusOK, gin.H{"ticket": entry.Ticket})
 }
 
-func MarkAttended(c *gin.Context) {
-	ticketID := c.Param("ticketId")
+func MarkAttended(ctx *gin.Context) {
+	ticketID := ctx.Param("ticketId")
 
 	var ticket db.Ticket
 	if err := db.DB.First(&ticket, ticketID).Error; err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "Ticket not found"})
+		network.Error(ctx, http.StatusNotFound, "Ticket not found")
 		return
 	}
 
 	db.DB.Model(&ticket).Update("status", "ATTENDED")
 
-	c.JSON(http.StatusOK, gin.H{"ticket": ticket})
+	network.Success(ctx, http.StatusOK, gin.H{"ticket": ticket})
 }
 
-func CancelTicket(c *gin.Context) {
-	ticketID := c.Param("ticketId")
+func CancelTicket(ctx *gin.Context) {
+	ticketID := ctx.Param("ticketId")
 
 	var ticket db.Ticket
 	if err := db.DB.First(&ticket, ticketID).Error; err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "Ticket not found"})
+		network.Error(ctx, http.StatusNotFound, "Ticket not found")
 		return
 	}
 
 	if ticket.Status != "WAITING" {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"error": "Only waiting tickets can be cancelled",
-		})
+		network.Error(ctx, http.StatusBadRequest, "Only waiting tickets can be cancelled")
 		return
 	}
 
@@ -153,7 +154,7 @@ func CancelTicket(c *gin.Context) {
 	// Recalculate positions for remaining WAITING tickets
 	recalculateTicketPosition(fmt.Sprint(ticket.ClinicID))
 
-	c.JSON(http.StatusOK, gin.H{
+	network.Success(ctx, http.StatusOK, gin.H{
 		"message": "Ticket cancelled successfully",
 		"ticket":  ticket,
 	})

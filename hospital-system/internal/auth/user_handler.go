@@ -5,6 +5,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/jozdlm/hospital-system/internal/db"
+	"github.com/jozdlm/hospital-system/internal/network"
 	"github.com/jozdlm/hospital-system/internal/utils"
 )
 
@@ -26,17 +27,13 @@ func CreateUser(ctx *gin.Context) {
 	var existingUser db.User
 	result := db.DB.Where("email = ?", input.Email).First(&existingUser)
 	if result.Error == nil {
-		ctx.JSON(http.StatusConflict, gin.H{
-			"error": "The email is already taken",
-		})
+		network.Error(ctx, http.StatusConflict, "The email is already taken")
 		return
 	}
 
 	hashedPassword, err := HashPassword(input.Password)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{
-			"error": "Could not hash the password",
-		})
+		network.Error(ctx, http.StatusInternalServerError, "Could not hash the password")
 		return
 	}
 
@@ -48,7 +45,8 @@ func CreateUser(ctx *gin.Context) {
 	}
 	db.DB.Create(&user)
 
-	ctx.JSON(http.StatusCreated, gin.H{
-		"user": user,
+	network.Success(ctx, http.StatusCreated, gin.H{
+		"message": "User created successfully",
+		"user":    user,
 	})
 }

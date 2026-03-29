@@ -8,7 +8,7 @@ type FieldError struct {
 type Response struct {
 	Success bool         `json:"success"`
 	Code    int          `json:"code"`
-	Message string       `json:"message"`
+	Message string       `json:"message,omitempty"`
 	Errors  []FieldError `json:"errors,omitempty"`
 	Data    any          `json:"data,omitempty"`
 }

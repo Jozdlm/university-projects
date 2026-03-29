@@ -5,6 +5,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/jozdlm/hospital-system/internal/db"
+	"github.com/jozdlm/hospital-system/internal/network"
 )
 
 type TicketsByClinic struct {
@@ -17,7 +18,7 @@ type TicketsByStatus struct {
 	Total  int64  `json:"total"`
 }
 
-func GetTicketsByClinic(c *gin.Context) {
+func GetTicketsByClinic(ctx *gin.Context) {
 	var results []TicketsByClinic
 
 	db.DB.Model(&db.Ticket{}).
@@ -27,10 +28,10 @@ func GetTicketsByClinic(c *gin.Context) {
 		Group("clinics.id, clinics.name").
 		Scan(&results)
 
-	c.JSON(http.StatusOK, gin.H{"report": results})
+	network.Success(ctx, http.StatusOK, gin.H{"report": results})
 }
 
-func GetTicketsByStatus(c *gin.Context) {
+func GetTicketsByStatus(ctx *gin.Context) {
 	var results []TicketsByStatus
 
 	db.DB.Model(&db.Ticket{}).
@@ -38,5 +39,5 @@ func GetTicketsByStatus(c *gin.Context) {
 		Group("status").
 		Scan(&results)
 
-	c.JSON(http.StatusOK, gin.H{"report": results})
+	network.Success(ctx, http.StatusOK, gin.H{"report": results})
 }
