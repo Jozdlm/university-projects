@@ -1,23 +1,22 @@
 package utils
 
 import (
-	"net/http"
-
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
+	"github.com/jozdlm/hospital-system/internal/network"
 )
 
-func HandleValidationError(c *gin.Context, err error) {
-	var errors []gin.H
+func HandleValidationError(ctx *gin.Context, err error) {
+	var fieldErrors []network.FieldError
 
 	for _, e := range err.(validator.ValidationErrors) {
-		errors = append(errors, gin.H{
-			"field":   e.Field(),
-			"message": validationMessage(e),
+		fieldErrors = append(fieldErrors, network.FieldError{
+			Field:   e.Field(),
+			Message: validationMessage(e),
 		})
 	}
 
-	c.JSON(http.StatusBadRequest, gin.H{"errors": errors})
+	network.ValidationError(ctx, fieldErrors)
 }
 
 func validationMessage(e validator.FieldError) string {
