@@ -76,11 +76,12 @@ func main() {
 		protected.GET("/clinics", clinic.GetClinics)
 		protected.GET("/tickets", ticket.GetTickets)
 		// Admin routes
-		adminRoutes := protected.Group("/reports")
+		adminRoutes := protected.Group("/admin")
 		adminRoutes.Use(auth.RoleMiddleware("admin"))
 		{
-			adminRoutes.GET("/by-clinic", reports.GetTicketsByClinic)
-			adminRoutes.GET("/by-status", reports.GetTicketsByStatus)
+			adminRoutes.GET("/reports/by-clinic", reports.GetTicketsByClinic)
+			adminRoutes.GET("/reports/by-status", reports.GetTicketsByStatus)
+			adminRoutes.POST("/users", auth.CreateUser)
 		}
 	}
 
