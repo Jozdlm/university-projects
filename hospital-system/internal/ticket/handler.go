@@ -9,7 +9,14 @@ import (
 )
 
 func GetTickets(ctx *gin.Context) {
+	status := ctx.Query("status")
 	var tickets []db.Ticket
-	db.DB.Find(&tickets)
+	query := db.DB.Preload("Clinic").Preload("Patient")
+
+	if status != "" {
+		query = query.Where("status = ?", status)
+	}
+
+	query.Find(&tickets)
 	network.Success(ctx, http.StatusOK, gin.H{"tickets": tickets})
 }

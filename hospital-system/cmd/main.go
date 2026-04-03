@@ -11,6 +11,7 @@ import (
 	"github.com/jozdlm/hospital-system/internal/auth"
 	"github.com/jozdlm/hospital-system/internal/clinic"
 	"github.com/jozdlm/hospital-system/internal/db"
+	"github.com/jozdlm/hospital-system/internal/network"
 	"github.com/jozdlm/hospital-system/internal/queue"
 	"github.com/jozdlm/hospital-system/internal/reports"
 	"github.com/jozdlm/hospital-system/internal/ticket"
@@ -63,30 +64,32 @@ func main() {
 		})
 	})
 
-	// Kiosk route (WebSocket)
-	r.GET("/kiosk", func(c *gin.Context) {
-		websockets.HandleWebSocket(hub, c)
-	})
-
-	// Auth routes (public)
-	r.POST("/api/auth/login", auth.Login)
+	// Public routes
+	public := r.Group("/api")
+	{
+		public.POST("/auth/login", auth.Login)
+		public.GET("/clinics", clinic.GetClinics)
+		public.POST("/tickets/emit", queue.EmitTicket)
+		// Kiosk route (WebSocket)
+		public.GET("/kiosk", func(c *gin.Context) {
+			websockets.HandleWebSocket(hub, c)
+		})
+	}
 
 	// Protected routes
 	protected := r.Group("/api")
 	protected.Use(auth.JWTMiddleware())
 	{
-		protected.GET("/me", func(c *gin.Context) {
-			c.JSON(http.StatusOK, gin.H{
-				"user_id": c.MustGet("user_id"),
-				"role":    c.MustGet("role"),
+		protected.GET("/me", func(ctx *gin.Context) {
+			network.Success(ctx, http.StatusOK, gin.H{
+				"user_id": ctx.MustGet("user_id"),
+				"role":    ctx.MustGet("role"),
 			})
 		})
-		protected.POST("/tickets/emit", queue.EmitTicket)
 		protected.GET("/queue/:clinicId", queue.GetQueue)
 		protected.PUT("/queue/:clinicId/call-next", queueHandler.CallNext)
 		protected.PUT("/tickets/:ticketId/cancel", queue.CancelTicket)
 		protected.PUT("/tickets/:ticketId/attend", queue.MarkAttended)
-		protected.GET("/clinics", clinic.GetClinics)
 		protected.GET("/tickets", ticket.GetTickets)
 		// Admin routes
 		adminRoutes := protected.Group("/admin")
