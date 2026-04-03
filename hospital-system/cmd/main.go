@@ -21,10 +21,12 @@ import (
 
 func main() {
 	// Load .env file
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Error loading .env file")
-	}
+	godotenv.Load()
+
+	// Removed this for now to avoid errors when deploying to Railway
+	//if err != nil {
+	//	log.Fatal("Error loading .env file")
+	//}
 
 	// Connect to database
 	db.Connect()
