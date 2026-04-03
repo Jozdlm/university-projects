@@ -40,6 +40,9 @@ func main() {
 		&db.QueueEntry{},
 	)
 
+	// Seed the database
+	db.Seed()
+
 	// Set up Gin router
 	r := gin.Default()
 
