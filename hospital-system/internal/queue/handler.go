@@ -1,6 +1,7 @@
 package queue
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
 
@@ -8,6 +9,7 @@ import (
 	"github.com/jozdlm/hospital-system/internal/db"
 	"github.com/jozdlm/hospital-system/internal/network"
 	"github.com/jozdlm/hospital-system/internal/utils"
+	websockets "github.com/jozdlm/hospital-system/internal/websocket"
 )
 
 type NewTicket struct {
@@ -79,7 +81,15 @@ func GetQueue(ctx *gin.Context) {
 	network.Success(ctx, http.StatusOK, gin.H{"queue": entries})
 }
 
-func CallNext(ctx *gin.Context) {
+type QueueHandler struct {
+	hub *websockets.Hub
+}
+
+func NewQueueHandler(hub *websockets.Hub) *QueueHandler {
+	return &QueueHandler{hub: hub}
+}
+
+func (h *QueueHandler) CallNext(ctx *gin.Context) {
 	clinicID := ctx.Param("clinicId")
 
 	// Get all waiting entries for this clinic ordered by position
@@ -106,15 +116,23 @@ func CallNext(ctx *gin.Context) {
 		return
 	}
 
-	// Update ticket status
+	// 1. Update ticket status
 	db.DB.Model(&entry.Ticket).Update("status", "IN_ATTENTION")
 
-	// Remove from queue
+	// 2. Remove from queue
 	db.DB.Where("ticket_id = ?", entry.TicketID).Delete(&db.QueueEntry{})
 
-	// Recalculate positions for remaining WAITING tickets
+	// 3. Recalculate positions
 	recalculateTicketPosition(clinicID)
 
+	// Preload relationships before broadcasting
+	db.DB.Preload("Clinic").Preload("Patient").First(&entry.Ticket, entry.Ticket.ID)
+
+	// 4. Broadcast AFTER everything is consistent
+	message, _ := json.Marshal(entry.Ticket)
+	h.hub.Broadcast <- message
+
+	// 5. Respond to the HTTP request
 	network.Success(ctx, http.StatusOK, gin.H{"ticket": entry.Ticket})
 }
 

@@ -14,6 +14,7 @@ import (
 	"github.com/jozdlm/hospital-system/internal/queue"
 	"github.com/jozdlm/hospital-system/internal/reports"
 	"github.com/jozdlm/hospital-system/internal/ticket"
+	websockets "github.com/jozdlm/hospital-system/internal/websocket"
 )
 
 func main() {
@@ -38,6 +39,13 @@ func main() {
 	// Set up Gin router
 	r := gin.Default()
 
+	// Set up WebSocket hub
+	hub := websockets.NewHub()
+	go hub.Run()
+
+	// Set up queue handler
+	queueHandler := queue.NewQueueHandler(hub)
+
 	// CORS
 	r.Use(cors.New(cors.Config{
 		AllowOrigins:     []string{"http://localhost:4200"},
@@ -55,6 +63,11 @@ func main() {
 		})
 	})
 
+	// Kiosk route (WebSocket)
+	r.GET("/kiosk", func(c *gin.Context) {
+		websockets.HandleWebSocket(hub, c)
+	})
+
 	// Auth routes (public)
 	r.POST("/api/auth/login", auth.Login)
 
@@ -70,7 +83,7 @@ func main() {
 		})
 		protected.POST("/tickets/emit", queue.EmitTicket)
 		protected.GET("/queue/:clinicId", queue.GetQueue)
-		protected.PUT("/queue/:clinicId/call-next", queue.CallNext)
+		protected.PUT("/queue/:clinicId/call-next", queueHandler.CallNext)
 		protected.PUT("/tickets/:ticketId/cancel", queue.CancelTicket)
 		protected.PUT("/tickets/:ticketId/attend", queue.MarkAttended)
 		protected.GET("/clinics", clinic.GetClinics)
