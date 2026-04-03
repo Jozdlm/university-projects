@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 	"net/http"
+	"os"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
@@ -102,6 +103,10 @@ func main() {
 	}
 
 	// Start server on port 8080
-	log.Println("Server running on http://localhost:8080")
-	r.Run(":8080")
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080"
+	}
+	log.Println("Server running on http://localhost:" + port)
+	r.Run(":" + port)
 }
