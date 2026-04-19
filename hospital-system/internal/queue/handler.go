@@ -13,8 +13,7 @@ import (
 )
 
 type NewTicket struct {
-	ClinicID    uint   `json:"clinic_id" binding:"required,min=1"`
-	PatientName string `json:"patient_name" binding:"required,min=2,max=100"`
+	ClinicID uint `json:"clinic_id" binding:"required,min=1"`
 }
 
 func EmitTicket(ctx *gin.Context) {
@@ -33,7 +32,7 @@ func EmitTicket(ctx *gin.Context) {
 	}
 
 	// Create patient
-	patient := db.Patient{Name: input.PatientName}
+	patient := db.Patient{Name: "Paciente"}
 	db.DB.Create(&patient)
 
 	// Generate ticket code e.g. MG-014
