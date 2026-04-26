@@ -1,0 +1,107 @@
+<div class="min-h-screen bg-gray-50">
+  <nav class="bg-white shadow-sm border-b border-gray-200">
+    <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+      <div>
+        <h1 class="text-2xl text-teal-900">Reportes y Estadísticas</h1>
+        <p class="text-gray-600">Panel de Administración</p>
+      </div>
+      <button
+        (click)="handleLogout()"
+        class="flex items-center gap-2 text-gray-600 hover:text-gray-800"
+      >
+        <svg lucideLogOut class="w-5 h-5"></svg>
+        Cerrar Sesión
+      </button>
+    </div>
+  </nav>
+
+  <div class="max-w-7xl mx-auto p-6">
+    <div class="bg-white rounded-2xl shadow-sm overflow-hidden">
+      <div class="flex border-b border-gray-200">
+        <button (click)="activeTab.set('clinics')" [class]="getTabClass('clinics')">
+          <svg lucideBarChart3 class="w-5 h-5"></svg>
+          Turnos por Clínica
+        </button>
+
+        <button (click)="activeTab.set('status')" [class]="getTabClass('status')">
+          <svg lucidePieChart class="w-5 h-5"></svg>
+          Turnos por Estado
+        </button>
+      </div>
+
+      <div class="p-8">
+        @if (activeTab() === 'clinics') {
+          <div>
+            <h2 class="text-2xl mb-6 text-gray-800">Turnos Atendidos por Clínica</h2>
+            <!-- <ResponsiveContainer width="100%" height={400}>
+              <BarChart data={ticketsByClinic}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+                <XAxis dataKey="clinic" stroke="#6b7280" />
+                <YAxis stroke="#6b7280" />
+                <Tooltip
+                  contentStyle={{ backgroundColor: "#fff", border: "1px solid #e5e7eb", borderRadius: "8px" }}
+                />
+                <Legend />
+                <Bar dataKey="tickets" fill="#14b8a6" name="Turnos Atendidos" radius={[8, 8, 0, 0]} />
+              </BarChart>
+            </ResponsiveContainer> -->
+
+            <div class="mt-8 grid grid-cols-2 md:grid-cols-5 gap-4">
+              @for (item of ticketsByClinic; track item.clinic) {
+                <div key="{item.clinic}" class="bg-teal-50 rounded-xl p-4 text-center">
+                  <p class="text-gray-600 text-sm mb-1">{{ item.clinic }}</p>
+                  <p class="text-3xl text-teal-600">{{ item.tickets }}</p>
+                </div>
+              }
+            </div>
+          </div>
+        } @else {
+          <div>
+            <h2 class="text-2xl mb-6 text-gray-800">Distribución de Turnos por Estado</h2>
+            <div class="flex flex-col md:flex-row items-center gap-8">
+              <!-- <ResponsiveContainer width="100%" height={400}>
+                <PieChart>
+                  <Pie
+                    data={ticketsByStatus}
+                    cx="50%"
+                    cy="50%"
+                    labelLine={false}
+                    label={(entry) => `${entry.status}: ${entry.value}`}
+                    outerRadius={140}
+                    fill="#8884d8"
+                    dataKey="value"
+                  >
+                    {ticketsByStatus.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={entry.color} />
+                    ))}
+                  </Pie>
+                  <Tooltip />
+                </PieChart>
+              </ResponsiveContainer> -->
+
+              <div class="flex-1 space-y-4 w-full">
+                @for (item of ticketsByStatus; track item.status) {
+                  <div class="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
+                    <div class="flex items-center gap-3">
+                      <div class="w-6 h-6 rounded" [style]="{ backgroundColor: item.color }"></div>
+                      <span class="text-gray-800">{{ item.status }}</span>
+                    </div>
+                    <span class="text-2xl text-gray-900">{{ item.value }}</span>
+                  </div>
+                }
+                <div class="mt-6 pt-6 border-t-2 border-gray-200">
+                  <div class="flex items-center justify-between">
+                    <span class="text-gray-800">Total de Turnos</span>
+                    <span class="text-3xl text-teal-600">
+                      {{ticketsByStatus.reduce((acc, item) => acc + item.value, 0)}}∫
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+</div>
