@@ -6,7 +6,7 @@ import { LucideLock, LucideMail } from '@lucide/angular';
   selector: 'app-login',
   imports: [FormsModule, LucideLock, LucideMail],
   templateUrl: './login.html',
-  styleUrl: './login.css',
+  styles: ``,
 })
 export class Login {
   public email = signal<string>('');
