@@ -1,0 +1,112 @@
+<div class="min-h-screen bg-gray-50">
+  <nav class="bg-white shadow-sm border-b border-gray-200">
+    <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+      <div>
+        <h1 class="text-2xl text-teal-900">Panel de Atención</h1>
+      </div>
+      <button
+        (click)="onLogOut()"
+        class="flex items-center gap-2 text-gray-600 hover:text-gray-800"
+      >
+        <svg lucideLogOut class="w-5 h-5"></svg>
+        Cerrar Sesión
+      </button>
+    </div>
+  </nav>
+
+  <div class="bg-white border-b border-gray-200 overflow-x-auto">
+    <div class="max-w-7xl mx-auto">
+      <div class="flex">
+        @for (clinic of clinics; track clinic.id) {
+          @let clinicTicketCount =
+            tickets().filter((t) => t.clinicId === clinic.id && t.status === "WAITING").length;
+
+          <button (click)="selectedClinic.set(clinic.id)" [class]="getClinicTabClass(clinic.id)">
+            <svg [lucideIcon]="clinic.icon" class="w-5 h-5"></svg>
+            <span class="hidden md:inline">{{ clinic.name }}</span>
+            @if (clinicTicketCount > 0) {
+              <span
+                class="bg-teal-600 text-white text-xs px-2 py-1 rounded-full min-w-[24px] text-center"
+              >
+                {{ clinicTicketCount }}
+              </span>
+            }
+          </button>
+        }
+      </div>
+    </div>
+  </div>
+
+  <div class="max-w-7xl mx-auto p-6">
+    @if (currentTicket()) {
+      <div class="bg-teal-600 text-white rounded-2xl p-8 mb-6 shadow-lg">
+        <p class="text-teal-100 mb-2">Turno en Atención</p>
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-4xl">{{ currentTicket()!.code }}</p>
+          </div>
+          <div class="flex gap-3">
+            <button
+              (click)="handleAttend(currentTicket()!.id)"
+              class="bg-white text-teal-600 hover:bg-teal-50 px-6 py-3 rounded-xl flex items-center gap-2 transition-colors"
+            >
+              <svg lucideCheckCircle class="w-5 h-5"></svg>
+              Atendido
+            </button>
+            <button
+              (click)="handleCancel(currentTicket()!.id)"
+              class="bg-red-500 text-white hover:bg-red-600 px-6 py-3 rounded-xl flex items-center gap-2 transition-colors"
+            >
+              <svg lucideXCircle class="w-5 h-5"></svg>
+              Cancelar
+            </button>
+          </div>
+        </div>
+      </div>
+    }
+
+    <div class="bg-white rounded-2xl shadow-sm p-6">
+      <div class="mb-6">
+        <h2 class="text-2xl text-gray-800">Cola de Espera ({{ waitingTickets().length }})</h2>
+      </div>
+
+      <div class="space-y-3">
+        @for (ticket of waitingTickets(); track ticket.id) {
+          <div
+            key="{ticket.id}"
+            class="border border-gray-200 rounded-xl p-4 flex items-center justify-between hover:bg-gray-50 transition-colors"
+          >
+            <div class="flex items-center gap-4">
+              <div
+                class="w-12 h-12 rounded-full bg-teal-100 text-teal-600 flex items-center justify-center"
+              >
+                {{ ticket.position }}
+              </div>
+              <div>
+                <p class="text-lg text-gray-900">{{ ticket.code }}</p>
+              </div>
+            </div>
+            <div class="flex gap-2">
+              <button
+                (click)="handleAttend(ticket.id)"
+                class="text-green-600 hover:bg-green-50 px-4 py-2 rounded-lg flex items-center gap-2 transition-colors"
+              >
+                <svg lucideCheckCircle class="w-5 h-5"></svg>
+                Atender
+              </button>
+              <button
+                (click)="handleCancel(ticket.id)"
+                class="text-red-600 hover:bg-red-50 px-4 py-2 rounded-lg flex items-center gap-2 transition-colors"
+              >
+                <svg lucideXCircle class="w-5 h-5"></svg>
+                Cancelar
+              </button>
+            </div>
+          </div>
+        } @empty {
+          <p class="text-center text-gray-500 py-8">No hay turnos en espera</p>
+        }
+      </div>
+    </div>
+  </div>
+</div>
