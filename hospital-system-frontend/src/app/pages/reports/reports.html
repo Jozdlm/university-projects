@@ -33,18 +33,15 @@
         @if (activeTab() === 'clinics') {
           <div>
             <h2 class="text-2xl mb-6 text-gray-800">Turnos Atendidos por Clínica</h2>
-            <!-- <ResponsiveContainer width="100%" height={400}>
-              <BarChart data={ticketsByClinic}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-                <XAxis dataKey="clinic" stroke="#6b7280" />
-                <YAxis stroke="#6b7280" />
-                <Tooltip
-                  contentStyle={{ backgroundColor: "#fff", border: "1px solid #e5e7eb", borderRadius: "8px" }}
-                />
-                <Legend />
-                <Bar dataKey="tickets" fill="#14b8a6" name="Turnos Atendidos" radius={[8, 8, 0, 0]} />
-              </BarChart>
-            </ResponsiveContainer> -->
+            <div class="w-full">
+              <canvas
+                baseChart
+                [data]="barChartData()"
+                [options]="barChartOptions"
+                type="bar"
+                style="max-height: 400px"
+              ></canvas>
+            </div>
 
             <div class="mt-8 grid grid-cols-2 md:grid-cols-5 gap-4">
               @for (item of ticketsByClinic; track item.clinic) {

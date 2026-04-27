@@ -44,6 +44,43 @@ export class Reports {
     },
   };
 
+  public barChartData = signal<ChartData<'bar'>>({
+    labels: this.ticketsByClinic.map((r) => r.clinic),
+    datasets: [
+      {
+        data: this.ticketsByClinic.map((r) => r.tickets),
+        backgroundColor: '#14b8a6',
+        borderRadius: 8,
+        label: 'Turnos Atendidos',
+      },
+    ],
+  });
+
+  public barChartOptions: ChartOptions<'bar'> = {
+    responsive: true,
+    maintainAspectRatio: true,
+    plugins: {
+      legend: { position: 'bottom', display: false },
+      tooltip: {
+        backgroundColor: '#fff',
+        borderColor: '#e5e7eb',
+        borderWidth: 1,
+        titleColor: '#111827',
+        bodyColor: '#6b7280',
+      },
+    },
+    scales: {
+      x: {
+        grid: { color: '#e5e7eb' },
+        ticks: { color: '#6b7280' },
+      },
+      y: {
+        grid: { color: '#e5e7eb' },
+        ticks: { color: '#6b7280' },
+      },
+    },
+  };
+
   public router = inject(Router);
   public activeTab = signal<'clinics' | 'status'>('clinics');
 
