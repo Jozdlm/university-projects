@@ -1,10 +1,12 @@
 import { Component, inject, signal } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { LucideLogOut, LucideChartPie, LucideChartColumn } from '@lucide/angular';
+import { ChartData, ChartOptions } from 'chart.js';
+import { BaseChartDirective } from 'ng2-charts';
 
 @Component({
   selector: 'app-reports',
-  imports: [RouterModule, LucideLogOut, LucideChartPie, LucideChartColumn],
+  imports: [RouterModule, LucideLogOut, LucideChartPie, LucideChartColumn, BaseChartDirective],
   templateUrl: './reports.html',
   styles: ``,
 })
@@ -23,6 +25,24 @@ export class Reports {
     { status: 'En Atención', value: 5, color: '#3b82f6' },
     { status: 'Cancelados', value: 17, color: '#ef4444' },
   ];
+
+  public pieChartData = signal<ChartData<'pie'>>({
+    labels: this.ticketsByStatus.map((r) => r.status),
+    datasets: [
+      {
+        data: this.ticketsByStatus.map((r) => r.value),
+        backgroundColor: this.ticketsByStatus.map((r) => r.color),
+      },
+    ],
+  });
+
+  public pieChartOptions: ChartOptions<'pie'> = {
+    responsive: true,
+    plugins: {
+      legend: { position: 'bottom', display: false },
+      tooltip: { enabled: true },
+    },
+  };
 
   public router = inject(Router);
   public activeTab = signal<'clinics' | 'status'>('clinics');

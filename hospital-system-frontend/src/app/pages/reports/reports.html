@@ -58,32 +58,21 @@
         } @else {
           <div>
             <h2 class="text-2xl mb-6 text-gray-800">Distribución de Turnos por Estado</h2>
-            <div class="flex flex-col md:flex-row items-center gap-8">
-              <!-- <ResponsiveContainer width="100%" height={400}>
-                <PieChart>
-                  <Pie
-                    data={ticketsByStatus}
-                    cx="50%"
-                    cy="50%"
-                    labelLine={false}
-                    label={(entry) => `${entry.status}: ${entry.value}`}
-                    outerRadius={140}
-                    fill="#8884d8"
-                    dataKey="value"
-                  >
-                    {ticketsByStatus.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={entry.color} />
-                    ))}
-                  </Pie>
-                  <Tooltip />
-                </PieChart>
-              </ResponsiveContainer> -->
-
+            <div class="flex flex-col md:flex-row items-center gap-8 w-full">
+              <div class="flex-2 w-full">
+                <canvas
+                  baseChart
+                  [data]="pieChartData()"
+                  [options]="pieChartOptions"
+                  type="pie"
+                  style="max-height: 400px"
+                ></canvas>
+              </div>
               <div class="flex-1 space-y-4 w-full">
                 @for (item of ticketsByStatus; track item.status) {
                   <div class="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
                     <div class="flex items-center gap-3">
-                      <div class="w-6 h-6 rounded" [style]="{ backgroundColor: item.color }"></div>
+                      <div class="w-6 h-6 rounded" [style.background-color]="item.color"></div>
                       <span class="text-gray-800">{{ item.status }}</span>
                     </div>
                     <span class="text-2xl text-gray-900">{{ item.value }}</span>
@@ -93,7 +82,7 @@
                   <div class="flex items-center justify-between">
                     <span class="text-gray-800">Total de Turnos</span>
                     <span class="text-3xl text-teal-600">
-                      {{ticketsByStatus.reduce((acc, item) => acc + item.value, 0)}}∫
+                      {{ticketsByStatus.reduce((acc, item) => acc + item.value, 0)}}
                     </span>
                   </div>
                 </div>
