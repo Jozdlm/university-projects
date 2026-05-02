@@ -11,7 +11,7 @@ export const routes: Routes = [
   {
     path: 'app',
     children: [
-      { path: '', component: Tickets, pathMatch: 'full' },
+      { path: 'tickets', component: Tickets, pathMatch: 'full' },
       { path: 'reports', component: Reports },
     ],
   },
