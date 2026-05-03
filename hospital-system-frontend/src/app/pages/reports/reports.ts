@@ -3,6 +3,7 @@ import { Router, RouterModule } from '@angular/router';
 import { LucideLogOut, LucideChartPie, LucideChartColumn } from '@lucide/angular';
 import { ChartData, ChartOptions } from 'chart.js';
 import { BaseChartDirective } from 'ng2-charts';
+import { AuthService } from '../../modules/auth/auth-service';
 
 @Component({
   selector: 'app-reports',
@@ -82,10 +83,11 @@ export class Reports {
   };
 
   public router = inject(Router);
+  private authService = inject(AuthService);
   public activeTab = signal<'clinics' | 'status'>('clinics');
 
   public handleLogout() {
-    this.router.navigate(['/auth/login']);
+    this.authService.logout();
   }
 
   public getTabClass(tab: 'clinics' | 'status'): string {

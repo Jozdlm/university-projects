@@ -18,6 +18,7 @@ export const routes: Routes = [
     canActivate: [authGuard],
     canActivateChild: [authGuard],
     children: [
+      { path: '', redirectTo: 'tickets', pathMatch: 'full' },
       { path: 'tickets', component: Tickets, canActivate: [frontDeskGuard] },
       { path: 'reports', component: Reports, canActivate: [adminGuard] },
     ],

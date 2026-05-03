@@ -10,6 +10,7 @@ import {
   LucideCircleCheckBig,
   LucideCircleX,
 } from '@lucide/angular';
+import { AuthService } from '../../modules/auth/auth-service';
 
 type TicketStatus = 'WAITING' | 'IN_ATTENTION' | 'ATTENDED' | 'CANCELLED';
 
@@ -35,6 +36,7 @@ interface Clinic {
 })
 export class Tickets {
   public router = inject(Router);
+  private authService = inject(AuthService);
 
   public clinics: Clinic[] = [
     { id: 1, name: 'Medicina General', icon: LucideStethoscope },
@@ -114,7 +116,7 @@ export class Tickets {
   }
 
   public onLogOut() {
-    this.router.navigate(['/auth/login']);
+    this.authService.logout();
   }
 
   public getClinicTabClass(clinicId: number): string {
