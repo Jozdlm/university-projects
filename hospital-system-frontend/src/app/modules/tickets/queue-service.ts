@@ -31,4 +31,13 @@ export class QueueService {
       headers: httpHeaders,
     });
   }
+
+  public markAsCancel(ticketId: number) {
+    const token = localStorage.getItem('token');
+    const httpHeaders = new HttpHeaders({ Authorization: `Bearer ${token}` });
+
+    return this.http.put(`${this.apiUrl}/tickets/${ticketId}/cancel`, {
+      headers: httpHeaders,
+    });
+  }
 }
