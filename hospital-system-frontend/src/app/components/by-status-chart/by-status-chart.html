@@ -11,7 +11,7 @@
       ></canvas>
     </div>
     <div class="flex-1 space-y-4 w-full">
-      @for (item of ticketsByStatus; track item.status) {
+      @for (item of ticketsByStatus(); track item.status) {
         <div class="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
           <div class="flex items-center gap-3">
             <div class="w-6 h-6 rounded" [style.background-color]="item.color"></div>
@@ -24,7 +24,7 @@
         <div class="flex items-center justify-between">
           <span class="text-gray-800">Total de Turnos</span>
           <span class="text-3xl text-teal-600">
-            {{ticketsByStatus.reduce((acc, item) => acc + item.value, 0)}}
+            {{ticketsByStatus().reduce((acc, item) => acc + item.value, 0)}}
           </span>
         </div>
       </div>

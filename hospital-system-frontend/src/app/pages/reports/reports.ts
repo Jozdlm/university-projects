@@ -1,10 +1,9 @@
 import { Component, inject, signal } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { LucideLogOut, LucideChartPie, LucideChartColumn } from '@lucide/angular';
-import { ChartData, ChartOptions } from 'chart.js';
-import { BaseChartDirective } from 'ng2-charts';
 import { AuthService } from '../../modules/auth/auth-service';
 import { ByStatusChart } from '../../components/by-status-chart/by-status-chart';
+import { ByClinicChart } from '../../components/by-clinic-chart/by-clinic-chart';
 
 @Component({
   selector: 'app-reports',
@@ -13,13 +12,17 @@ import { ByStatusChart } from '../../components/by-status-chart/by-status-chart'
     LucideLogOut,
     LucideChartPie,
     LucideChartColumn,
-    BaseChartDirective,
     ByStatusChart,
+    ByClinicChart,
   ],
   templateUrl: './reports.html',
   styles: ``,
 })
 export class Reports {
+  public router = inject(Router);
+  private authService = inject(AuthService);
+  public activeTab = signal<'clinics' | 'status'>('clinics');
+
   public ticketsByClinic = [
     { clinic: 'Medicina General', tickets: 45 },
     { clinic: 'Oculista', tickets: 32 },
@@ -28,46 +31,12 @@ export class Reports {
     { clinic: 'Cardiología', tickets: 41 },
   ];
 
-  public barChartData = signal<ChartData<'bar'>>({
-    labels: this.ticketsByClinic.map((r) => r.clinic),
-    datasets: [
-      {
-        data: this.ticketsByClinic.map((r) => r.tickets),
-        backgroundColor: '#14b8a6',
-        borderRadius: 8,
-        label: 'Turnos Atendidos',
-      },
-    ],
-  });
-
-  public barChartOptions: ChartOptions<'bar'> = {
-    responsive: true,
-    maintainAspectRatio: true,
-    plugins: {
-      legend: { position: 'bottom', display: false },
-      tooltip: {
-        backgroundColor: '#fff',
-        borderColor: '#e5e7eb',
-        borderWidth: 1,
-        titleColor: '#111827',
-        bodyColor: '#6b7280',
-      },
-    },
-    scales: {
-      x: {
-        grid: { color: '#e5e7eb' },
-        ticks: { color: '#6b7280' },
-      },
-      y: {
-        grid: { color: '#e5e7eb' },
-        ticks: { color: '#6b7280' },
-      },
-    },
-  };
-
-  public router = inject(Router);
-  private authService = inject(AuthService);
-  public activeTab = signal<'clinics' | 'status'>('clinics');
+  public ticketsByStatus = [
+    { status: 'Atendidos', value: 124, color: '#14b8a6' },
+    { status: 'En Espera', value: 38, color: '#f59e0b' },
+    { status: 'En Atención', value: 5, color: '#3b82f6' },
+    { status: 'Cancelados', value: 17, color: '#ef4444' },
+  ];
 
   public handleLogout() {
     this.authService.logout();
