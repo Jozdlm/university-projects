@@ -13,16 +13,7 @@ import { AuthService } from '../../modules/auth/auth-service';
 import { ClinicService } from '../../modules/tickets/clinic-service';
 import { forkJoin, map, switchMap } from 'rxjs';
 import { QueueService } from '../../modules/tickets/queue-service';
-
-type TicketStatus = 'WAITING' | 'IN_ATTENTION' | 'ATTENDED' | 'CANCELLED';
-
-interface Ticket {
-  id: number;
-  code: string;
-  position: number;
-  status: TicketStatus;
-  clinicId: number;
-}
+import { Ticket } from '../../modules/tickets/ticket-dto';
 
 interface NavItem {
   id: number;
@@ -45,29 +36,14 @@ export class Tickets implements OnInit {
   public navItemIcons = [LucideStethoscope, LucideEye, LucideActivity, LucideEye, LucideHeart];
   public navItems = signal<NavItem[]>([]);
 
-  public initialTickets: Ticket[] = [
-    { id: 1, code: 'MED-1234', position: 1, status: 'IN_ATTENTION', clinicId: 1 },
-    { id: 2, code: 'MED-1235', position: 2, status: 'WAITING', clinicId: 1 },
-    { id: 3, code: 'MED-1236', position: 3, status: 'WAITING', clinicId: 1 },
-    { id: 4, code: 'OCU-2156', position: 1, status: 'IN_ATTENTION', clinicId: 2 },
-    { id: 5, code: 'OCU-2157', position: 2, status: 'WAITING', clinicId: 2 },
-    { id: 6, code: 'DER-3421', position: 1, status: 'WAITING', clinicId: 3 },
-    { id: 7, code: 'DER-3422', position: 2, status: 'WAITING', clinicId: 3 },
-    { id: 8, code: 'OFT-4789', position: 1, status: 'WAITING', clinicId: 4 },
-    { id: 9, code: 'CAR-5643', position: 1, status: 'IN_ATTENTION', clinicId: 5 },
-  ];
-  public tickets = signal<Ticket[]>(this.initialTickets);
   public selectedClinic = signal<number>(1);
-
-  public clinicTickets = computed(() => {
-    return this.tickets().filter((t) => t.clinicId === this.selectedClinic());
-  });
+  public clinicTickets = signal<Ticket[]>([]);
 
   public currentTicket = computed(() => {
-    return this.clinicTickets().find((t) => t.status === 'IN_ATTENTION') ?? null;
+    return this.clinicTickets().find((t) => t.ticket.status === 'IN_ATTENTION') ?? null;
   });
   public waitingTickets = computed(() => {
-    return this.clinicTickets().filter((t) => t.status === 'WAITING');
+    return this.clinicTickets().filter((t) => t.ticket.status === 'WAITING');
   });
 
   public ngOnInit(): void {
@@ -99,6 +75,12 @@ export class Tickets implements OnInit {
       .subscribe({ next: (val) => this.navItems.set(val) });
   }
 
+  public loadClinicTickets() {
+    this.queueService
+      .getQueueByClinic(this.selectedClinic())
+      .subscribe({ next: (val) => this.clinicTickets.set(val.queue) });
+  }
+
   public handleCallNext() {
     const nextTicket = this.waitingTickets()[0];
     if (nextTicket) {
@@ -114,11 +96,11 @@ export class Tickets implements OnInit {
   }
 
   public handleAttend(ticketId: number) {
-    this.queueService.markAsAttend(ticketId).subscribe({ next: (val) => this.handleCallNext() });
+    this.queueService.markAsAttend(ticketId).subscribe({ next: (val) => this.loadClinicTickets() });
   }
 
   public handleCancel(ticketId: number) {
-    this.queueService.markAsCancel(ticketId).subscribe({ next: (val) => this.handleCallNext() });
+    this.queueService.markAsCancel(ticketId).subscribe({ next: (val) => this.loadClinicTickets() });
   }
 
   public onLogOut() {
