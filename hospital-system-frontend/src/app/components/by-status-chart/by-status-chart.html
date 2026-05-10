@@ -15,7 +15,7 @@
         <div class="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
           <div class="flex items-center gap-3">
             <div class="w-6 h-6 rounded" [style.background-color]="item.color"></div>
-            <span class="text-gray-800">{{ item.status | titlecase }}</span>
+            <span class="text-gray-800">{{ item.status | statusLabel | titlecase }}</span>
           </div>
           <span class="text-2xl text-gray-900">{{ item.value }}</span>
         </div>
