@@ -23,6 +23,15 @@ export class QueueService {
       .pipe(map((res) => res.data));
   }
 
+  public callNextTicket(clinicId: number) {
+    const token = localStorage.getItem('token');
+    const httpHeaders = new HttpHeaders({ Authorization: `Bearer ${token}` });
+
+    return this.http.put(`${this.apiUrl}/queue/${clinicId}/call-next`, {
+      headers: httpHeaders,
+    });
+  }
+
   public markAsAttend(ticketId: number) {
     const token = localStorage.getItem('token');
     const httpHeaders = new HttpHeaders({ Authorization: `Bearer ${token}` });

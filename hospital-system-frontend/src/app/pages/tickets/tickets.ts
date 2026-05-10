@@ -82,25 +82,21 @@ export class Tickets implements OnInit {
   }
 
   public handleCallNext() {
-    const nextTicket = this.waitingTickets()[0];
-    if (nextTicket) {
-      this.tickets.update((prev) =>
-        prev.map((t) => {
-          if (t.id === nextTicket.id) return { ...t, status: 'IN_ATTENTION' };
-          if (t.status === 'IN_ATTENTION' && t.clinicId === this.selectedClinic())
-            return { ...t, status: 'ATTENDED' };
-          return t;
-        }),
-      );
-    }
+    this.queueService
+      .callNextTicket(this.selectedClinic())
+      .subscribe({ next: (val) => this.loadClinicTickets() });
   }
 
   public handleAttend(ticketId: number) {
-    this.queueService.markAsAttend(ticketId).subscribe({ next: (val) => this.loadClinicTickets() });
+    this.queueService.markAsAttend(ticketId).subscribe({
+      next: (val) => this.loadClinicTickets(),
+    });
   }
 
   public handleCancel(ticketId: number) {
-    this.queueService.markAsCancel(ticketId).subscribe({ next: (val) => this.loadClinicTickets() });
+    this.queueService.markAsCancel(ticketId).subscribe({
+      next: (val) => this.loadClinicTickets(),
+    });
   }
 
   public onLogOut() {
