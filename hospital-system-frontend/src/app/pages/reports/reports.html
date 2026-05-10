@@ -33,7 +33,7 @@
         @if (activeTab() === 'clinics') {
           <app-by-clinic-chart [ticketsByClinic]="ticketsByClinic()"></app-by-clinic-chart>
         } @else {
-          <app-by-status-chart [ticketsByStatus]="ticketsByStatus"></app-by-status-chart>
+          <app-by-status-chart [ticketsByStatus]="ticketsByStatus()"></app-by-status-chart>
         }
       </div>
     </div>

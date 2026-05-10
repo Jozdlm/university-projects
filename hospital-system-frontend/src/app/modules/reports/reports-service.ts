@@ -2,7 +2,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { API_URL } from '../../di-tokens';
 import { map, Observable } from 'rxjs';
-import { ReportByStatus, ReportByClinic, ByClinic } from './report-dto';
+import { ReportByStatus, ReportByClinic, ByClinic, ByStatus } from './report-dto';
 import { ApiResponse } from '../../api';
 
 @Injectable({
@@ -11,8 +11,9 @@ import { ApiResponse } from '../../api';
 export class ReportsService {
   private http = inject(HttpClient);
   private apiUrl = inject(API_URL);
+  public chartBgColors = ['#14b8a6', '#f59e0b', '#3b82f6', '#ef4444'];
 
-  public getReportByStatus() {
+  public getReportByStatus(): Observable<ByStatus[]> {
     const token = localStorage.getItem('token');
     const httpHeaders = new HttpHeaders({ Authorization: `Bearer ${token}` });
 
@@ -20,7 +21,18 @@ export class ReportsService {
       .get<ApiResponse<ReportByStatus>>(`${this.apiUrl}/admin/reports/by-status`, {
         headers: httpHeaders,
       })
-      .pipe(map((res) => res.data.report));
+      .pipe(
+        map((res) => res.data.report),
+        map((report) =>
+          report.map((item, index) => {
+            return {
+              status: item.status.replace('_', ' '),
+              value: item.total,
+              color: this.chartBgColors[index],
+            };
+          }),
+        ),
+      );
   }
 
   public getReportByClinic(): Observable<ByClinic[]> {

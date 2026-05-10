@@ -1,3 +1,4 @@
+import { CommonModule } from '@angular/common';
 import { Component, computed, input, signal } from '@angular/core';
 import { ChartData, ChartOptions } from 'chart.js';
 import { BaseChartDirective } from 'ng2-charts';
@@ -10,7 +11,7 @@ interface TicketByStatus {
 
 @Component({
   selector: 'app-by-status-chart',
-  imports: [BaseChartDirective],
+  imports: [BaseChartDirective, CommonModule],
   templateUrl: './by-status-chart.html',
   styles: ``,
 })

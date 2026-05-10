@@ -16,3 +16,9 @@ export interface ByClinic {
   clinic: string;
   tickets: number;
 }
+
+export interface ByStatus {
+  status: string;
+  value: number;
+  color: string;
+}

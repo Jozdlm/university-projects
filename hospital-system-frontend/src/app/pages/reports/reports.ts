@@ -5,7 +5,7 @@ import { AuthService } from '../../modules/auth/auth-service';
 import { ByStatusChart } from '../../components/by-status-chart/by-status-chart';
 import { ByClinicChart } from '../../components/by-clinic-chart/by-clinic-chart';
 import { ReportsService } from '../../modules/reports/reports-service';
-import { ByClinic } from '../../modules/reports/report-dto';
+import { ByClinic, ByStatus } from '../../modules/reports/report-dto';
 
 @Component({
   selector: 'app-reports',
@@ -26,21 +26,22 @@ export class Reports implements OnInit {
   public activeTab = signal<'clinics' | 'status'>('clinics');
 
   public ticketsByClinic = signal<ByClinic[]>([]);
-
-  public ticketsByStatus = [
-    { status: 'Atendidos', value: 124, color: '#14b8a6' },
-    { status: 'En Espera', value: 38, color: '#f59e0b' },
-    { status: 'En Atención', value: 5, color: '#3b82f6' },
-    { status: 'Cancelados', value: 17, color: '#ef4444' },
-  ];
+  public ticketsByStatus = signal<ByStatus[]>([]);
 
   public ngOnInit(): void {
     this.loadTicketsByClinic();
+    this.loadTicketsByStatus();
   }
 
   public loadTicketsByClinic() {
     this.reportService.getReportByClinic().subscribe({
       next: (report) => this.ticketsByClinic.set(report),
+    });
+  }
+
+  public loadTicketsByStatus() {
+    this.reportService.getReportByStatus().subscribe({
+      next: (report) => this.ticketsByStatus.set(report),
     });
   }
 
