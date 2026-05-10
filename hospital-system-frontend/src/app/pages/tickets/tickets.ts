@@ -114,18 +114,7 @@ export class Tickets implements OnInit {
   }
 
   public handleAttend(ticketId: number) {
-    this.tickets.update((prev) => {
-      const ticket = prev.find((t) => t.id === ticketId);
-      if (ticket?.status === 'IN_ATTENTION') {
-        const nextTicket = this.waitingTickets()[0];
-        return prev.map((t) => {
-          if (t.id === ticketId) return { ...t, status: 'ATTENDED' };
-          if (nextTicket && t.id === nextTicket.id) return { ...t, status: 'IN_ATTENTION' };
-          return t;
-        });
-      }
-      return prev.map((t) => (t.id === ticketId ? { ...t, status: 'ATTENDED' } : t));
-    });
+    this.queueService.markAsAttend(ticketId).subscribe({ next: (val) => this.handleCallNext() });
   }
 
   public handleCancel(ticketId: number) {
