@@ -18,17 +18,14 @@
     <div class="max-w-7xl mx-auto">
       <div class="flex">
         @for (clinic of navItems(); track clinic.id) {
-          @let clinicTicketCount =
-            tickets().filter((t) => t.clinicId === clinic.id && t.status === "WAITING").length;
-
           <button (click)="selectedClinic.set(clinic.id)" [class]="getClinicTabClass(clinic.id)">
             <svg [lucideIcon]="clinic.icon" class="w-5 h-5"></svg>
             <span class="hidden md:inline">{{ clinic.name }}</span>
-            @if (clinicTicketCount > 0) {
+            @if (clinic.queue > 0) {
               <span
                 class="bg-teal-600 text-white text-xs px-2 py-1 rounded-full min-w-[24px] text-center"
               >
-                {{ clinicTicketCount }}
+                {{ clinic.queue }}
               </span>
             }
           </button>

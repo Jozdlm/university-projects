@@ -1,5 +1,4 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
-import { Router } from '@angular/router';
 import {
   LucideActivity,
   LucideDynamicIcon,
@@ -12,7 +11,8 @@ import {
 } from '@lucide/angular';
 import { AuthService } from '../../modules/auth/auth-service';
 import { ClinicService } from '../../modules/tickets/clinic-service';
-import { map } from 'rxjs';
+import { forkJoin, map, switchMap } from 'rxjs';
+import { QueueService } from '../../modules/tickets/queue-service';
 
 type TicketStatus = 'WAITING' | 'IN_ATTENTION' | 'ATTENDED' | 'CANCELLED';
 
@@ -28,6 +28,7 @@ interface NavItem {
   id: number;
   name: string;
   icon: any;
+  queue: number;
 }
 
 @Component({
@@ -39,6 +40,7 @@ interface NavItem {
 export class Tickets implements OnInit {
   private authService = inject(AuthService);
   private clinicService = inject(ClinicService);
+  private queueService = inject(QueueService);
 
   public navItemIcons = [LucideStethoscope, LucideEye, LucideActivity, LucideEye, LucideHeart];
   public navItems = signal<NavItem[]>([]);
@@ -76,14 +78,22 @@ export class Tickets implements OnInit {
     this.clinicService
       .getClinicList()
       .pipe(
-        map((clinics) =>
-          clinics.map((item, index) => {
-            return {
-              id: item.id,
-              name: item.name,
-              icon: this.navItemIcons[index],
-            } as NavItem;
-          }),
+        switchMap((clinics) =>
+          forkJoin(
+            clinics.map((item, index) => {
+              return this.queueService.getQueueByClinic(item.id).pipe(
+                map(
+                  (queue) =>
+                    ({
+                      id: item.id,
+                      name: item.name,
+                      icon: this.navItemIcons[index],
+                      queue: queue.count,
+                    }) as NavItem,
+                ),
+              );
+            }),
+          ),
         ),
       )
       .subscribe({ next: (val) => this.navItems.set(val) });
