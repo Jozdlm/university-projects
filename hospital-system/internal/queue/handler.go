@@ -77,7 +77,10 @@ func GetQueue(ctx *gin.Context) {
 		Order("position asc").
 		Find(&entries)
 
-	network.Success(ctx, http.StatusOK, gin.H{"queue": entries})
+	network.Success(ctx, http.StatusOK, gin.H{
+		"queue": entries,
+		"count": len(entries),
+	})
 }
 
 type QueueHandler struct {
