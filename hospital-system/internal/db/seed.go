@@ -9,6 +9,7 @@ import (
 func Seed() {
 	seedClinics()
 	seedAdminUser()
+	seedStaffUser()
 }
 
 func seedClinics() {
@@ -41,5 +42,23 @@ func seedAdminUser() {
 			Role:     "admin",
 		})
 		log.Println("Admin user seeded successfully!")
+	}
+}
+
+func seedStaffUser() {
+	var staffUser User
+	result := DB.Where("email = ?", "frontdesk@hospital.com").First(&staffUser)
+	if result.Error != nil {
+		bytes, err := bcrypt.GenerateFromPassword([]byte("staff123"), 14)
+		if err != nil {
+			log.Fatal("Could not hash staff password:", err)
+		}
+		DB.Create(&User{
+			Name:     "Front Desk",
+			Email:    "frontdesk@hospital.com",
+			Password: string(bytes),
+			Role:     "staff",
+		})
+		log.Println("Staff user seeded successfully!")
 	}
 }
