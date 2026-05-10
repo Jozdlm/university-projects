@@ -1,8 +1,8 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { API_URL } from '../../di-tokens';
-import { map } from 'rxjs';
-import { ReportByStatus, ReportByClinic } from './report-dto';
+import { map, Observable } from 'rxjs';
+import { ReportByStatus, ReportByClinic, ByClinic } from './report-dto';
 import { ApiResponse } from '../../api';
 
 @Injectable({
@@ -23,7 +23,7 @@ export class ReportsService {
       .pipe(map((res) => res.data.report));
   }
 
-  public getReportByClinic() {
+  public getReportByClinic(): Observable<ByClinic[]> {
     const token = localStorage.getItem('token');
     const httpHeaders = new HttpHeaders({ Authorization: `Bearer ${token}` });
 
@@ -31,6 +31,16 @@ export class ReportsService {
       .get<ApiResponse<ReportByClinic>>(`${this.apiUrl}/admin/reports/by-clinic`, {
         headers: httpHeaders,
       })
-      .pipe(map((res) => res.data.report));
+      .pipe(
+        map((res) => res.data.report),
+        map((report) =>
+          report.map((item) => {
+            return {
+              clinic: item.clinic_name,
+              tickets: item.total,
+            };
+          }),
+        ),
+      );
   }
 }

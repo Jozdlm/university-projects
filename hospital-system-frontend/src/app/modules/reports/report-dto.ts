@@ -11,3 +11,8 @@ export interface ReportByClinic {
     total: number;
   }[];
 }
+
+export interface ByClinic {
+  clinic: string;
+  tickets: number;
+}

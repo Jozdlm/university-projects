@@ -1,9 +1,11 @@
-import { Component, inject, signal } from '@angular/core';
-import { Router, RouterModule } from '@angular/router';
+import { Component, inject, OnInit, signal } from '@angular/core';
+import { RouterModule } from '@angular/router';
 import { LucideLogOut, LucideChartPie, LucideChartColumn } from '@lucide/angular';
 import { AuthService } from '../../modules/auth/auth-service';
 import { ByStatusChart } from '../../components/by-status-chart/by-status-chart';
 import { ByClinicChart } from '../../components/by-clinic-chart/by-clinic-chart';
+import { ReportsService } from '../../modules/reports/reports-service';
+import { ByClinic } from '../../modules/reports/report-dto';
 
 @Component({
   selector: 'app-reports',
@@ -18,18 +20,12 @@ import { ByClinicChart } from '../../components/by-clinic-chart/by-clinic-chart'
   templateUrl: './reports.html',
   styles: ``,
 })
-export class Reports {
-  public router = inject(Router);
+export class Reports implements OnInit {
   private authService = inject(AuthService);
+  private reportService = inject(ReportsService);
   public activeTab = signal<'clinics' | 'status'>('clinics');
 
-  public ticketsByClinic = [
-    { clinic: 'Medicina General', tickets: 45 },
-    { clinic: 'Oculista', tickets: 32 },
-    { clinic: 'Dermatología', tickets: 28 },
-    { clinic: 'Oftalmología', tickets: 38 },
-    { clinic: 'Cardiología', tickets: 41 },
-  ];
+  public ticketsByClinic = signal<ByClinic[]>([]);
 
   public ticketsByStatus = [
     { status: 'Atendidos', value: 124, color: '#14b8a6' },
@@ -37,6 +33,16 @@ export class Reports {
     { status: 'En Atención', value: 5, color: '#3b82f6' },
     { status: 'Cancelados', value: 17, color: '#ef4444' },
   ];
+
+  public ngOnInit(): void {
+    this.loadTicketsByClinic();
+  }
+
+  public loadTicketsByClinic() {
+    this.reportService.getReportByClinic().subscribe({
+      next: (report) => this.ticketsByClinic.set(report),
+    });
+  }
 
   public handleLogout() {
     this.authService.logout();
