@@ -1,4 +1,4 @@
-import { Component, computed, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, effect, inject, OnInit, signal } from '@angular/core';
 import {
   LucideActivity,
   LucideDynamicIcon,
@@ -45,9 +45,16 @@ export class Tickets implements OnInit {
   public waitingTickets = computed(() => {
     return this.clinicTickets().filter((t) => t.ticket.status === 'WAITING');
   });
+  public constructor() {
+    effect(() => {
+      console.log('Clinic selected change ', this.selectedClinic());
+      this.loadClinicTickets();
+    });
+  }
 
   public ngOnInit(): void {
     this.loadClinics();
+    this.loadClinicTickets();
   }
 
   public loadClinics(): void {
