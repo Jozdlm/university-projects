@@ -17,7 +17,7 @@
   <div class="bg-white border-b border-gray-200 overflow-x-auto">
     <div class="max-w-7xl mx-auto">
       <div class="flex">
-        @for (clinic of clinics; track clinic.id) {
+        @for (clinic of navItems(); track clinic.id) {
           @let clinicTicketCount =
             tickets().filter((t) => t.clinicId === clinic.id && t.status === "WAITING").length;
 

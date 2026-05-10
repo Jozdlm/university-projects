@@ -1,4 +1,4 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import {
   LucideActivity,
@@ -11,6 +11,8 @@ import {
   LucideCircleX,
 } from '@lucide/angular';
 import { AuthService } from '../../modules/auth/auth-service';
+import { ClinicService } from '../../modules/tickets/clinic-service';
+import { map } from 'rxjs';
 
 type TicketStatus = 'WAITING' | 'IN_ATTENTION' | 'ATTENDED' | 'CANCELLED';
 
@@ -22,7 +24,7 @@ interface Ticket {
   clinicId: number;
 }
 
-interface Clinic {
+interface NavItem {
   id: number;
   name: string;
   icon: any;
@@ -34,17 +36,12 @@ interface Clinic {
   templateUrl: './tickets.html',
   styles: ``,
 })
-export class Tickets {
-  public router = inject(Router);
+export class Tickets implements OnInit {
   private authService = inject(AuthService);
+  private clinicService = inject(ClinicService);
 
-  public clinics: Clinic[] = [
-    { id: 1, name: 'Medicina General', icon: LucideStethoscope },
-    { id: 2, name: 'Oculista', icon: LucideEye },
-    { id: 3, name: 'Dermatología', icon: LucideActivity },
-    { id: 4, name: 'Oftalmología', icon: LucideEye },
-    { id: 5, name: 'Cardiología', icon: LucideHeart },
-  ];
+  public navItemIcons = [LucideStethoscope, LucideEye, LucideActivity, LucideEye, LucideHeart];
+  public navItems = signal<NavItem[]>([]);
 
   public initialTickets: Ticket[] = [
     { id: 1, code: 'MED-1234', position: 1, status: 'IN_ATTENTION', clinicId: 1 },
@@ -70,6 +67,27 @@ export class Tickets {
   public waitingTickets = computed(() => {
     return this.clinicTickets().filter((t) => t.status === 'WAITING');
   });
+
+  public ngOnInit(): void {
+    this.loadClinics();
+  }
+
+  public loadClinics(): void {
+    this.clinicService
+      .getClinicList()
+      .pipe(
+        map((clinics) =>
+          clinics.map((item, index) => {
+            return {
+              id: item.id,
+              name: item.name,
+              icon: this.navItemIcons[index],
+            } as NavItem;
+          }),
+        ),
+      )
+      .subscribe({ next: (val) => this.navItems.set(val) });
+  }
 
   public handleCallNext() {
     const nextTicket = this.waitingTickets()[0];
