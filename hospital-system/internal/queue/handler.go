@@ -121,20 +121,17 @@ func (h *QueueHandler) CallNext(ctx *gin.Context) {
 	// 1. Update ticket status
 	db.DB.Model(&entry.Ticket).Update("status", "IN_ATTENTION")
 
-	// 2. Remove from queue
-	db.DB.Where("ticket_id = ?", entry.TicketID).Delete(&db.QueueEntry{})
-
-	// 3. Recalculate positions
+	// 2. Recalculate positions
 	recalculateTicketPosition(clinicID)
 
 	// Preload relationships before broadcasting
 	db.DB.Preload("Clinic").Preload("Patient").First(&entry.Ticket, entry.Ticket.ID)
 
-	// 4. Broadcast AFTER everything is consistent
+	// 3. Broadcast AFTER everything is consistent
 	message, _ := json.Marshal(entry.Ticket)
 	h.hub.Broadcast <- message
 
-	// 5. Respond to the HTTP request
+	// 4. Respond to the HTTP request
 	network.Success(ctx, http.StatusOK, gin.H{"ticket": entry.Ticket})
 }
 
@@ -149,7 +146,16 @@ func MarkAttended(ctx *gin.Context) {
 
 	db.DB.Model(&ticket).Update("status", "ATTENDED")
 
-	network.Success(ctx, http.StatusOK, gin.H{"ticket": ticket})
+	// Remove from queue
+	db.DB.Where("ticket_id = ?", ticket.ID).Delete(&db.QueueEntry{})
+
+	// Recalculate positions for remaining WAITING tickets
+	recalculateTicketPosition(fmt.Sprint(ticket.ClinicID))
+
+	network.Success(ctx, http.StatusOK, gin.H{
+		"message": "Ticket attended successfully",
+		"ticket":  ticket,
+	})
 }
 
 func CancelTicket(ctx *gin.Context) {
