@@ -11,44 +11,22 @@ import { ApiResponse } from '../../api';
 export class QueueService {
   private http = inject(HttpClient);
   private apiUrl = inject(API_URL);
-  private token = localStorage.getItem('token');
-  private httpHeaders = new HttpHeaders({ Authorization: `Bearer ${this.token}` });
 
   public getQueueByClinic(id: number) {
     return this.http
-      .get<ApiResponse<QueueList>>(`${this.apiUrl}/queue/${id}`, {
-        headers: this.httpHeaders,
-      })
+      .get<ApiResponse<QueueList>>(`${this.apiUrl}/queue/${id}`)
       .pipe(map((res) => res.data));
   }
 
   public callNextTicket(clinicId: number) {
-    return this.http.put(
-      `${this.apiUrl}/queue/${clinicId}/call-next`,
-      {},
-      {
-        headers: this.httpHeaders,
-      },
-    );
+    return this.http.put(`${this.apiUrl}/queue/${clinicId}/call-next`, {});
   }
 
   public markAsAttend(ticketId: number) {
-    return this.http.put(
-      `${this.apiUrl}/tickets/${ticketId}/attend`,
-      {},
-      {
-        headers: this.httpHeaders,
-      },
-    );
+    return this.http.put(`${this.apiUrl}/tickets/${ticketId}/attend`, {});
   }
 
   public markAsCancel(ticketId: number) {
-    return this.http.put(
-      `${this.apiUrl}/tickets/${ticketId}/cancel`,
-      {},
-      {
-        headers: this.httpHeaders,
-      },
-    );
+    return this.http.put(`${this.apiUrl}/tickets/${ticketId}/cancel`, {});
   }
 }
