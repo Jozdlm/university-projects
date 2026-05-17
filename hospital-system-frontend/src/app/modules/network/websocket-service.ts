@@ -1,7 +1,7 @@
 import { inject, Injectable, OnDestroy, OnInit } from '@angular/core';
 import { Subject } from 'rxjs';
 import { ClinicState } from './clinic-state';
-import { WS_URL } from '../di-tokens';
+import { WS_URL } from '../../di-tokens';
 
 @Injectable({
   providedIn: 'root',

@@ -14,7 +14,7 @@ import { AuthService } from '../../modules/auth/auth-service';
 import { Subscription } from 'rxjs';
 import { QueueService } from '../../modules/tickets/queue-service';
 import { Ticket } from '../../modules/tickets/ticket-dto';
-import { WebsocketService } from '../../network/websocket-service';
+import { WebsocketService } from '../../modules/network/websocket-service';
 
 interface NavItem {
   id: number;

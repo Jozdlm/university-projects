@@ -4,7 +4,7 @@ import { API_URL } from '../../di-tokens';
 import { QueueList } from './ticket-dto';
 import { map, Observable } from 'rxjs';
 import { ApiResponse } from '../../api';
-import { ClinicState, ClinicStateList } from '../../network/clinic-state';
+import { ClinicState, ClinicStateList } from '../network/clinic-state';
 
 @Injectable({
   providedIn: 'root',
