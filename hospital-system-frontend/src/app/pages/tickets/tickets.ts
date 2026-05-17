@@ -8,6 +8,7 @@ import {
   LucideStethoscope,
   LucideCircleCheckBig,
   LucideCircleX,
+  LucideBell,
 } from '@lucide/angular';
 import { AuthService } from '../../modules/auth/auth-service';
 import { ClinicService } from '../../modules/tickets/clinic-service';
@@ -24,7 +25,7 @@ interface NavItem {
 
 @Component({
   selector: 'app-tickets',
-  imports: [LucideLogOut, LucideDynamicIcon, LucideCircleCheckBig, LucideCircleX],
+  imports: [LucideLogOut, LucideDynamicIcon, LucideCircleCheckBig, LucideCircleX, LucideBell],
   templateUrl: './tickets.html',
   styles: ``,
 })
