@@ -6,6 +6,8 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/jozdlm/hospital-system/internal/clinic"
+	"github.com/jozdlm/hospital-system/internal/common"
 	"github.com/jozdlm/hospital-system/internal/db"
 	"github.com/jozdlm/hospital-system/internal/network"
 	"github.com/jozdlm/hospital-system/internal/utils"
@@ -83,6 +85,18 @@ func GetQueue(ctx *gin.Context) {
 	})
 }
 
+func GetClinicState(ctx *gin.Context) {
+	clinics := clinic.ListClinics()
+
+	var states []common.ClinicState
+	for _, clinic := range clinics {
+		state := common.BuildClinicState(clinic.ID, clinic.Name)
+		states = append(states, state)
+	}
+
+	network.Success(ctx, http.StatusOK, gin.H{"clinics": states})
+}
+
 type QueueHandler struct {
 	hub *websockets.Hub
 }
@@ -118,20 +132,25 @@ func (h *QueueHandler) CallNext(ctx *gin.Context) {
 		return
 	}
 
-	// 1. Update ticket status
+	// Update ticket status
 	db.DB.Model(&entry.Ticket).Update("status", "IN_ATTENTION")
 
-	// 2. Recalculate positions
+	// Recalculate positions
 	recalculateTicketPosition(clinicID)
 
 	// Preload relationships before broadcasting
 	db.DB.Preload("Clinic").Preload("Patient").First(&entry.Ticket, entry.Ticket.ID)
 
-	// 3. Broadcast AFTER everything is consistent
-	message, _ := json.Marshal(entry.Ticket)
+	// Prepare the state before broadcast
+	var clinic db.Clinic
+	db.DB.First(&clinic, entry.ClinicID)
+	state := common.BuildClinicState(uint(entry.ClinicID), clinic.Name)
+
+	// Broadcast AFTER everything is consistent
+	message, _ := json.Marshal(state)
 	h.hub.Broadcast <- message
 
-	// 4. Respond to the HTTP request
+	// Respond to the HTTP request
 	network.Success(ctx, http.StatusOK, gin.H{"ticket": entry.Ticket})
 }
 

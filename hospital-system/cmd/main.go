@@ -77,9 +77,10 @@ func main() {
 		public.GET("/clinics", clinic.GetClinics)
 		public.POST("/tickets/emit", queue.EmitTicket)
 		// Kiosk route (WebSocket)
-		public.GET("/kiosk", func(c *gin.Context) {
+		public.GET("/waiting-room", func(c *gin.Context) {
 			websockets.HandleWebSocket(hub, c)
 		})
+		public.GET("/waiting-room/state", queue.GetClinicState)
 	}
 
 	// Protected routes
