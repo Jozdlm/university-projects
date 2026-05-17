@@ -47,7 +47,6 @@ export class Tickets implements OnInit {
   });
   public constructor() {
     effect(() => {
-      console.log('Clinic selected change ', this.selectedClinic());
       this.loadClinicTickets();
     });
   }
@@ -83,9 +82,12 @@ export class Tickets implements OnInit {
   }
 
   public loadClinicTickets() {
-    this.queueService
-      .getQueueByClinic(this.selectedClinic())
-      .subscribe({ next: (val) => this.clinicTickets.set(val.queue) });
+    this.queueService.getQueueByClinic(this.selectedClinic()).subscribe({
+      next: (val) => {
+        this.clinicTickets.set(val.queue);
+        this.loadClinics();
+      },
+    });
   }
 
   public handleCallNext() {
