@@ -75,7 +75,7 @@ func main() {
 	{
 		public.POST("/auth/login", auth.Login)
 		public.GET("/clinics", clinic.GetClinics)
-		public.POST("/tickets/emit", queue.EmitTicket)
+		public.POST("/tickets/emit", queueHandler.EmitTicket)
 		// Kiosk route (WebSocket)
 		public.GET("/waiting-room", func(c *gin.Context) {
 			websockets.HandleWebSocket(hub, c)
@@ -95,8 +95,8 @@ func main() {
 		})
 		protected.GET("/queue/:clinicId", queue.GetQueue)
 		protected.PUT("/queue/:clinicId/call-next", queueHandler.CallNext)
-		protected.PUT("/tickets/:ticketId/cancel", queue.CancelTicket)
-		protected.PUT("/tickets/:ticketId/attend", queue.MarkAttended)
+		protected.PUT("/tickets/:ticketId/cancel", queueHandler.CancelTicket)
+		protected.PUT("/tickets/:ticketId/attend", queueHandler.MarkAttended)
 		protected.GET("/tickets", ticket.GetTickets)
 		// Admin routes
 		adminRoutes := protected.Group("/admin")

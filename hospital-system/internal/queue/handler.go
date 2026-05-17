@@ -1,7 +1,6 @@
 package queue
 
 import (
-	"encoding/json"
 	"fmt"
 	"net/http"
 
@@ -14,11 +13,19 @@ import (
 	websockets "github.com/jozdlm/hospital-system/internal/websocket"
 )
 
+type QueueHandler struct {
+	hub *websockets.Hub
+}
+
+func NewQueueHandler(hub *websockets.Hub) *QueueHandler {
+	return &QueueHandler{hub: hub}
+}
+
 type NewTicket struct {
 	ClinicID uint `json:"clinic_id" binding:"required,min=1"`
 }
 
-func EmitTicket(ctx *gin.Context) {
+func (h *QueueHandler) EmitTicket(ctx *gin.Context) {
 	var input NewTicket
 
 	if err := ctx.ShouldBindJSON(&input); err != nil {
@@ -63,6 +70,9 @@ func EmitTicket(ctx *gin.Context) {
 	}
 	db.DB.Create(&entry)
 
+	// Broadcast AFTER everything is consistent
+	h.broadcastClinicState(ticket.ClinicID)
+
 	network.Success(ctx, http.StatusCreated, gin.H{
 		"ticket":   ticket,
 		"position": entry.Position,
@@ -95,14 +105,6 @@ func GetClinicState(ctx *gin.Context) {
 	}
 
 	network.Success(ctx, http.StatusOK, gin.H{"clinics": states})
-}
-
-type QueueHandler struct {
-	hub *websockets.Hub
-}
-
-func NewQueueHandler(hub *websockets.Hub) *QueueHandler {
-	return &QueueHandler{hub: hub}
 }
 
 func (h *QueueHandler) CallNext(ctx *gin.Context) {
@@ -141,20 +143,14 @@ func (h *QueueHandler) CallNext(ctx *gin.Context) {
 	// Preload relationships before broadcasting
 	db.DB.Preload("Clinic").Preload("Patient").First(&entry.Ticket, entry.Ticket.ID)
 
-	// Prepare the state before broadcast
-	var clinic db.Clinic
-	db.DB.First(&clinic, entry.ClinicID)
-	state := common.BuildClinicState(uint(entry.ClinicID), clinic.Name)
-
 	// Broadcast AFTER everything is consistent
-	message, _ := json.Marshal(state)
-	h.hub.Broadcast <- message
+	h.broadcastClinicState(entry.ClinicID)
 
 	// Respond to the HTTP request
 	network.Success(ctx, http.StatusOK, gin.H{"ticket": entry.Ticket})
 }
 
-func MarkAttended(ctx *gin.Context) {
+func (h *QueueHandler) MarkAttended(ctx *gin.Context) {
 	ticketID := ctx.Param("ticketId")
 
 	var ticket db.Ticket
@@ -171,13 +167,16 @@ func MarkAttended(ctx *gin.Context) {
 	// Recalculate positions for remaining WAITING tickets
 	recalculateTicketPosition(fmt.Sprint(ticket.ClinicID))
 
+	// Broadcast AFTER everything is consistent
+	h.broadcastClinicState(ticket.ClinicID)
+
 	network.Success(ctx, http.StatusOK, gin.H{
 		"message": "Ticket attended successfully",
 		"ticket":  ticket,
 	})
 }
 
-func CancelTicket(ctx *gin.Context) {
+func (h *QueueHandler) CancelTicket(ctx *gin.Context) {
 	ticketID := ctx.Param("ticketId")
 
 	var ticket db.Ticket
@@ -198,6 +197,9 @@ func CancelTicket(ctx *gin.Context) {
 
 	// Recalculate positions for remaining WAITING tickets
 	recalculateTicketPosition(fmt.Sprint(ticket.ClinicID))
+
+	// Broadcast AFTER everything is consistent
+	h.broadcastClinicState(ticket.ClinicID)
 
 	network.Success(ctx, http.StatusOK, gin.H{
 		"message": "Ticket cancelled successfully",
