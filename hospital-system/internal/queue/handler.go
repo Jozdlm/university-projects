@@ -167,8 +167,8 @@ func CancelTicket(ctx *gin.Context) {
 		return
 	}
 
-	if ticket.Status != "WAITING" {
-		network.Error(ctx, http.StatusBadRequest, "Only waiting tickets can be cancelled")
+	if ticket.Status != "WAITING" && ticket.Status != "IN_ATTENTION" {
+		network.Error(ctx, http.StatusBadRequest, "Only waiting or in-attention tickets can be cancelled")
 		return
 	}
 
