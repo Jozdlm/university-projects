@@ -68,6 +68,10 @@ export class Tickets implements OnInit, OnDestroy {
               return clinic;
             }),
           );
+
+          if (value.clinic_id === this.selectedClinic()) {
+            this.loadClinicTickets();
+          }
         },
       }),
     );
