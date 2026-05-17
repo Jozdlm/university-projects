@@ -11,8 +11,7 @@ import {
   LucideBell,
 } from '@lucide/angular';
 import { AuthService } from '../../modules/auth/auth-service';
-import { ClinicService } from '../../modules/tickets/clinic-service';
-import { forkJoin, map, Subscription, switchMap } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { QueueService } from '../../modules/tickets/queue-service';
 import { Ticket } from '../../modules/tickets/ticket-dto';
 import { WebsocketService } from '../../network/websocket-service';
@@ -32,7 +31,6 @@ interface NavItem {
 })
 export class Tickets implements OnInit, OnDestroy {
   private authService = inject(AuthService);
-  private clinicService = inject(ClinicService);
   private queueService = inject(QueueService);
   private webSocketService = inject(WebsocketService);
 
@@ -57,7 +55,7 @@ export class Tickets implements OnInit, OnDestroy {
   }
 
   public ngOnInit(): void {
-    this.loadClinics();
+    this.loadQueueState();
     this.loadClinicTickets();
     this.webSocketSubscription.add(
       this.webSocketService.messages$.subscribe({
@@ -79,29 +77,21 @@ export class Tickets implements OnInit, OnDestroy {
     this.webSocketSubscription.unsubscribe();
   }
 
-  public loadClinics(): void {
-    this.clinicService
-      .getClinicList()
-      .pipe(
-        switchMap((clinics) =>
-          forkJoin(
-            clinics.map((item, index) => {
-              return this.queueService.getQueueByClinic(item.id).pipe(
-                map(
-                  (queue) =>
-                    ({
-                      id: item.id,
-                      name: item.name,
-                      icon: this.navItemIcons[index],
-                      queue: queue.count,
-                    }) as NavItem,
-                ),
-              );
-            }),
-          ),
-        ),
-      )
-      .subscribe({ next: (val) => this.navItems.set(val) });
+  public loadQueueState(): void {
+    this.queueService.getQueueSnapshot().subscribe({
+      next: (res) => {
+        const items = res.map((item, index) => {
+          return {
+            id: item.clinic_id,
+            name: item.clinic_name,
+            icon: this.navItemIcons[index],
+            queue: item.waiting_count,
+          } as NavItem;
+        });
+
+        this.navItems.set(items);
+      },
+    });
   }
 
   public loadClinicTickets() {
@@ -115,18 +105,18 @@ export class Tickets implements OnInit, OnDestroy {
   public handleCallNext() {
     this.queueService
       .callNextTicket(this.selectedClinic())
-      .subscribe({ next: (val) => this.loadClinicTickets() });
+      .subscribe({ next: () => this.loadClinicTickets() });
   }
 
   public handleAttend(ticketId: number) {
     this.queueService.markAsAttend(ticketId).subscribe({
-      next: (val) => this.loadClinicTickets(),
+      next: () => this.loadClinicTickets(),
     });
   }
 
   public handleCancel(ticketId: number) {
     this.queueService.markAsCancel(ticketId).subscribe({
-      next: (val) => this.loadClinicTickets(),
+      next: () => this.loadClinicTickets(),
     });
   }
 

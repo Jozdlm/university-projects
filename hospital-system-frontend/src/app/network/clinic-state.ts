@@ -5,3 +5,7 @@ export interface ClinicState {
   next_ticket: string;
   waiting_count: number;
 }
+
+export interface ClinicStateList {
+  clinics: ClinicState[];
+}
