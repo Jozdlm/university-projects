@@ -11,53 +11,43 @@ import { ApiResponse } from '../../api';
 export class QueueService {
   private http = inject(HttpClient);
   private apiUrl = inject(API_URL);
+  private token = localStorage.getItem('token');
+  private httpHeaders = new HttpHeaders({ Authorization: `Bearer ${this.token}` });
 
   public getQueueByClinic(id: number) {
-    const token = localStorage.getItem('token');
-    const httpHeaders = new HttpHeaders({ Authorization: `Bearer ${token}` });
-
     return this.http
       .get<ApiResponse<QueueList>>(`${this.apiUrl}/queue/${id}`, {
-        headers: httpHeaders,
+        headers: this.httpHeaders,
       })
       .pipe(map((res) => res.data));
   }
 
   public callNextTicket(clinicId: number) {
-    const token = localStorage.getItem('token');
-    const httpHeaders = new HttpHeaders({ Authorization: `Bearer ${token}` });
-
     return this.http.put(
       `${this.apiUrl}/queue/${clinicId}/call-next`,
       {},
       {
-        headers: httpHeaders,
+        headers: this.httpHeaders,
       },
     );
   }
 
   public markAsAttend(ticketId: number) {
-    const token = localStorage.getItem('token');
-    const httpHeaders = new HttpHeaders({ Authorization: `Bearer ${token}` });
-
     return this.http.put(
       `${this.apiUrl}/tickets/${ticketId}/attend`,
       {},
       {
-        headers: httpHeaders,
+        headers: this.httpHeaders,
       },
     );
   }
 
   public markAsCancel(ticketId: number) {
-    const token = localStorage.getItem('token');
-    const httpHeaders = new HttpHeaders({ Authorization: `Bearer ${token}` });
-
     return this.http.put(
       `${this.apiUrl}/tickets/${ticketId}/cancel`,
       {},
       {
-        headers: httpHeaders,
+        headers: this.httpHeaders,
       },
     );
   }
