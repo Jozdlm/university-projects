@@ -27,26 +27,38 @@ export class QueueService {
     const token = localStorage.getItem('token');
     const httpHeaders = new HttpHeaders({ Authorization: `Bearer ${token}` });
 
-    return this.http.put(`${this.apiUrl}/queue/${clinicId}/call-next`, {
-      headers: httpHeaders,
-    });
+    return this.http.put(
+      `${this.apiUrl}/queue/${clinicId}/call-next`,
+      {},
+      {
+        headers: httpHeaders,
+      },
+    );
   }
 
   public markAsAttend(ticketId: number) {
     const token = localStorage.getItem('token');
     const httpHeaders = new HttpHeaders({ Authorization: `Bearer ${token}` });
 
-    return this.http.put(`${this.apiUrl}/tickets/${ticketId}/attend`, {
-      headers: httpHeaders,
-    });
+    return this.http.put(
+      `${this.apiUrl}/tickets/${ticketId}/attend`,
+      {},
+      {
+        headers: httpHeaders,
+      },
+    );
   }
 
   public markAsCancel(ticketId: number) {
     const token = localStorage.getItem('token');
     const httpHeaders = new HttpHeaders({ Authorization: `Bearer ${token}` });
 
-    return this.http.put(`${this.apiUrl}/tickets/${ticketId}/cancel`, {
-      headers: httpHeaders,
-    });
+    return this.http.put(
+      `${this.apiUrl}/tickets/${ticketId}/cancel`,
+      {},
+      {
+        headers: httpHeaders,
+      },
+    );
   }
 }
