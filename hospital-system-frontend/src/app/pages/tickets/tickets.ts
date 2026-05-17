@@ -1,4 +1,4 @@
-import { Component, computed, effect, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, effect, inject, OnDestroy, OnInit, signal } from '@angular/core';
 import {
   LucideActivity,
   LucideDynamicIcon,
@@ -12,9 +12,10 @@ import {
 } from '@lucide/angular';
 import { AuthService } from '../../modules/auth/auth-service';
 import { ClinicService } from '../../modules/tickets/clinic-service';
-import { forkJoin, map, switchMap } from 'rxjs';
+import { forkJoin, map, Subscription, switchMap } from 'rxjs';
 import { QueueService } from '../../modules/tickets/queue-service';
 import { Ticket } from '../../modules/tickets/ticket-dto';
+import { WebsocketService } from '../../network/websocket-service';
 
 interface NavItem {
   id: number;
@@ -29,10 +30,13 @@ interface NavItem {
   templateUrl: './tickets.html',
   styles: ``,
 })
-export class Tickets implements OnInit {
+export class Tickets implements OnInit, OnDestroy {
   private authService = inject(AuthService);
   private clinicService = inject(ClinicService);
   private queueService = inject(QueueService);
+  private webSocketService = inject(WebsocketService);
+
+  public webSocketSubscription = new Subscription();
 
   public navItemIcons = [LucideStethoscope, LucideEye, LucideActivity, LucideEye, LucideHeart];
   public navItems = signal<NavItem[]>([]);
@@ -55,6 +59,24 @@ export class Tickets implements OnInit {
   public ngOnInit(): void {
     this.loadClinics();
     this.loadClinicTickets();
+    this.webSocketSubscription.add(
+      this.webSocketService.messages$.subscribe({
+        next: (value) => {
+          this.navItems.update((items) =>
+            items.map((clinic) => {
+              if (clinic.id === value.clinic_id) {
+                clinic.queue = value.waiting_count;
+              }
+              return clinic;
+            }),
+          );
+        },
+      }),
+    );
+  }
+
+  public ngOnDestroy(): void {
+    this.webSocketSubscription.unsubscribe();
   }
 
   public loadClinics(): void {
@@ -86,7 +108,6 @@ export class Tickets implements OnInit {
     this.queueService.getQueueByClinic(this.selectedClinic()).subscribe({
       next: (val) => {
         this.clinicTickets.set(val.queue);
-        this.loadClinics();
       },
     });
   }
